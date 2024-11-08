@@ -25,7 +25,7 @@ def predict_secondary_structure(aa_sequence, output_dir=None, device="gpu"):
         ]
 
         # Capture the output using subprocess and extract only the secondary structure
-        result = subprocess.run(cmd, cwd="/home/jason/outputdir/python_projects/s4pred", 
+        result = subprocess.run(cmd, cwd="/content/convergent_overlaps_aa_change/s4pred", 
                                 capture_output=True, text=True, check=True)
         
         # Extract the secondary structure from the command output
