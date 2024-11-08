@@ -1,0 +1,8 @@
+python3 run_model.py --device gpu --save-files --outdir /home/jason/outputdir/python_projects/s4pred/outputs --save-by-idx /home/jason/outputdir/python_projects/multi_seqs.ss2
+
+
+python3 run_model.py --outfmt fas --outfmt2 horiz --outfmt ss2 --save-files --device gpu example/test_sequence.fasta > outputs/test_sequence.fas
+
+python3 run_model.py --outfmt ss2 --save-files --device gpu example/test_sequence.fasta > outputs/test_sequence.fas
+
+python3 run_model.py --outfmt ss2 --save-files --device gpu example/test_sequence_mod.fasta > outputs/test_sequence_mod.fas
