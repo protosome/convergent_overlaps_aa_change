@@ -1,4 +1,0 @@
-overlap_length,model_pth_location,training_epochs,dropout,embedding_dim,num_heads,ffn_dim,num_blocks,parameters,notes
-310,/content/convergent_overlaps_aa_change/aa_change_model_set/pytorch_overlap_model_20241024_aa_change_310.pth,3,0.1,156,13,192,5,802983,
-311,/content/convergent_overlaps_aa_change/aa_change_model_set/pytorch_overlap_model_20241024_aa_change_311.pth,3,0.1,156,13,192,5,802983,
-312,/content/convergent_overlaps_aa_change/aa_change_model_set/pytorch_overlap_model_20241024_aa_change_312.pth,3,0.1,156,13,192,5,802983,
