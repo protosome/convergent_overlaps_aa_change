@@ -1,6 +1,7 @@
 import subprocess
 import os
 import tempfile
+import sys
 
 
 def predict_secondary_structure(aa_sequence, output_dir=None, device="gpu"):
