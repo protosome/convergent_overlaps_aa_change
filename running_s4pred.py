@@ -21,14 +21,14 @@ def predict_secondary_structure(aa_sequence, output_dir=None, device="gpu"):
         # Need to identify location of python venv, will access dependencies there
 
         cmd = [
-            "/home/jason/outputdir/python_projects/.venv/bin/python", "run_model.py",
+            sys.executable, "run_model.py",
             "--outfmt", "ss2",
             "--device", device,
             fasta_input
         ]
 
         # Capture the output using subprocess and extract only the secondary structure
-        result = subprocess.run(cmd, cwd="/home/jason/outputdir/python_projects/s4pred", 
+        result = subprocess.run(cmd, cwd="/content/convergent_overlaps_aa_change/s4pred", 
                                 capture_output=True, text=True, check=False)
         
         if result.returncode != 0:
