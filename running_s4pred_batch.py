@@ -19,7 +19,7 @@ def predict_secondary_structure_batch(aa_sequences, output_dir=None, device="gpu
 
     try:
         cmd = [
-            "/home/jason/outputdir/python_projects/.venv/bin/python",
+            sys.executable,
             "run_model.py",
             "--outfmt", "ss2",
             "--device", device,
@@ -28,12 +28,14 @@ def predict_secondary_structure_batch(aa_sequences, output_dir=None, device="gpu
         # launch and stream
         proc = subprocess.Popen(
             cmd,
-            cwd="/home/jason/outputdir/python_projects/s4pred",
+            cwd="/content/convergent_overlaps_aa_change/s4pred",
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
             bufsize=1  # line‑buffered
         )
+
+        
 
         secondary_structures = []
         current_structure = []
