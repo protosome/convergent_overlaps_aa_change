@@ -3,6 +3,7 @@ import os
 import tempfile
 import pandas as pd
 from tqdm import tqdm
+import sys
 
 
 def predict_secondary_structure_batch(aa_sequences, output_dir=None, device="gpu"):
