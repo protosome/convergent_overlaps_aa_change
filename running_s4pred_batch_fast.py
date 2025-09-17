@@ -4,9 +4,9 @@ import tempfile
 from typing import List, Optional, Tuple
 from tqdm import tqdm
 
-S4PRED_PY   = "/home/jason/outputdir/python_projects/.venv/bin/python"
-S4PRED_CWD  = "/home/jason/outputdir/python_projects/s4pred"
-S4PRED_EXEC = "run_model_new.py"
+S4PRED_PY   = sys.executable
+S4PRED_CWD  = "/content/convergent_overlaps_aa_change/s4pred"
+S4PRED_EXEC = "/content/convergent_overlaps_aa_change/s4pred/run_model_new.py"
 
 def _write_fasta_indexed(indexed_seqs: List[Tuple[int, str]]) -> str:
     tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".fasta", prefix="s4pred_")
