@@ -8,13 +8,16 @@ This project, **Convergent Overlaps AA Change**, is focused on analyzing overlap
 ## Getting Started
 Follow these steps to get started with this project in Google Colab, which is currently the fastest way to get started. It can be run locally with a supported GPU, however currently this will require updates to file paths in the notebook as appropriate.
 
+## Running the Notebook in Colab
+Click on the "Open In Colab" badge at the top of this README to open the notebook in Google Colab and start running the code interactively.
+
 ### Clone the Repository
 Clone the project repository by running the appropriate command to copy the project files to your local environment.
 
 ## Getting Started
 Follow these steps to get started with this project in Google Colab:
 
-### Clone the Repository
+### Clone the repositories and install required dependencies 
 Clone the repository as well as other required dependencies (eg, biopython, fair-esm, and s4pred):
 
 ```bash
@@ -28,23 +31,11 @@ tar -xvzf weights.tar.gz
 cd /content/convergent_overlaps_aa_change/
 ```
 
-### Setup
-Navigate to the required directory and download the necessary model weights. Extract the downloaded weights and navigate back to the project directory.
-
-### Install Dependencies
-Install the required dependencies for the project. This includes libraries for sequence analysis, model training, and deep learning.
-
-## Usage
-This project utilizes Python and several deep learning libraries. Below are the main components to get you started with using the provided models for sequence analysis.
-
 ### Tokenization and Text Vectorization
-To work with the sequences, you will need to tokenize and vectorize them. Tokenization is necessary to convert sequences into a numerical format that the model can understand, while vectorization ensures that all sequences are of consistent length for processing.
+To work with the sequences, you will need to tokenize and vectorize them. Tokenization is necessary to convert sequences into a numerical format that the model can understand, while vectorization ensures that all sequences are of consistent length for processing. This is done automatically with the provided tokenizers.
 
 ### Predict Overlapping Sequence for Two Amino Acid Sequences
-The main functionality of this project is to predict overlapping DNA sequences for two given amino acid sequences. This is done using transformer-based models trained specifically for this purpose.
-
-## Running the Notebook in Colab
-Click on the "Open In Colab" badge at the top of this README to open the notebook in Google Colab and start running the code interactively.
+The main functionality of this project is to predict overlapping DNA sequences for two given amino acid sequences. This is done using transformer-based models trained specifically for this purpose. An overlap length from 199 to 312 may be user specified when generating and optimizing the overlap.
 
 ## Repository Structure
 - **analysis.ipynb**: Main notebook for running the analysis.
