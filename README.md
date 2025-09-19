@@ -48,6 +48,8 @@ If no sequence preservation is required, simply copy the same input sequence int
 ### Output
 After running, one excel file will be generated per row from the input file. Each file will contain every amino acid pair from the windowed optimization process. To start, the recoemmendation is to sort for the higest value in the "combined score" column.
 
+From the output file, the "translated_integrated_seq_1" and "translated_integrated_seq_2" columns contain the full integrated amino acid sequences, and the "integrated_seq_1" and "integrated_seq_2" columns contain the integrated full DNA sequences for both, amino acid sequences, respectively. These are the DNA sequences that include the convergent overlaps.
+
 ## Repository Structure
 - **analysis.ipynb**: Main notebook for running the analysis.
 - **s4pred/**: Directory containing scripts and model weights for secondary structure prediction.
