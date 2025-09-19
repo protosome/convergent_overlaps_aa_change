@@ -69,7 +69,7 @@ Repository: https://github.com/psipred/s4pred
 Reference: Moffat L, Jones DT. Increasing the accuracy of single sequence prediction methods using a deep semi-supervised learning framework. Xu J, editor. Bioinformatics. 2021 Nov 5;37(21):3744–51.  
 
 ESM-2 (Evolutionary Scale Modeling)
-Repository: https://github.com/facebookresearch/esm
+Repository: https://github.com/facebookresearch/esm and https://huggingface.co/facebook/esm2_t12_35M_UR50D (for models)
 Reference: Lin Z, Akin H, Rao R, et al. Language models of protein sequences at the scale of evolution enable accurate structure prediction. Science. 2023 Mar 17;379(6637):1123–30.
 
 Biopython
