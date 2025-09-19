@@ -46,7 +46,7 @@ If desired, amino acids can be designated for preservation by placing square bra
 If no sequence preservation is required, simply copy the same input sequence into the bracket columns.
 
 ### Output
-After running, one excel file will be outputted per row in the input file. Each file will contain every amino acid pair from the windowed optimization process. To start, the recoemmendation is to sort for the higest value in the "combined score" column.
+After running, one excel file will be generated per row from the input file. Each file will contain every amino acid pair from the windowed optimization process. To start, the recoemmendation is to sort for the higest value in the "combined score" column.
 
 ## Repository Structure
 - **analysis.ipynb**: Main notebook for running the analysis.
