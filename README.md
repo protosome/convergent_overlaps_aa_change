@@ -17,8 +17,10 @@ Follow these steps to get started with this project in Google Colab:
 ### Clone the Repository
 Clone the repository and move into the project directory:
 
+```bash
 git clone https://github.com/protosome/convergent_overlaps_aa_change.git
 cd convergent_overlaps_aa_change
+```
 
 ### Setup
 Navigate to the required directory and download the necessary model weights. Extract the downloaded weights and navigate back to the project directory.
