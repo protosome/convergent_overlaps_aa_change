@@ -17,7 +17,7 @@ Clone the project repository by running the appropriate command to copy the proj
 ## Getting Started
 Follow these steps to get started with this project in Google Colab:
 
-### Clone the repositories and install required dependencies 
+### Clone the Repositories and Install Required Dependencies 
 Clone the repository as well as other required dependencies (eg, biopython, fair-esm, and s4pred):
 
 ```bash
@@ -36,6 +36,15 @@ To work with the sequences, you will need to tokenize and vectorize them. Tokeni
 
 ### Predict Overlapping Sequence for Two Amino Acid Sequences
 The main functionality of this project is to predict overlapping DNA sequences for two given amino acid sequences. This is done using transformer-based models trained specifically for this purpose. An overlap length from 199 to 312 may be user specified when generating and optimizing the overlap.
+
+### Sequence Inputs
+An Excel (.xlsx) or CSV file containing two amino acid sequences (minimum length: 105 amino acids each) in the columns" "**aa_seq_1**" and "**aa_seq_2**". 
+
+If desired, amino acids can be designated for preservation by placing square brackets around them. For example, given the sequence MRTSSRT, writing MR[TS]SRT will preserve the amino acids TS during overlap generation and optimization. Add these to columns "**aa_seq_1_brackets**" and "**aa_seq_2_brackets**". Note: if both sequences contain preserved residues at the same relative position, this may create conflicts and reduce the feasibility of generating valid overlaps.
+
+If no sequence preservation is required, simply copy the same input sequence into the bracket columns.
+
+
 
 ## Repository Structure
 - **analysis.ipynb**: Main notebook for running the analysis.
