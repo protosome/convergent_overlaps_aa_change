@@ -6,7 +6,7 @@
 This project, **Convergent Overlaps AA Change**, is focused on analyzing overlapping amino acid sequences and predicting DNA back-translation. The core functionality involves training and using transformer encoder-based models to predict overlapping DNA sequences that encode two given amino acid sequences. The project also integrates secondary structure prediction using S4Pred.
 
 ## Getting Started
-Follow these steps to get started with this project in Google Colab:
+Follow these steps to get started with this project in Google Colab, which is currently the fastest way to get started. It can be run locally with a supported GPU, however currently this will require updates to file paths in the notebook as appropriate.
 
 ### Clone the Repository
 Clone the project repository by running the appropriate command to copy the project files to your local environment.
