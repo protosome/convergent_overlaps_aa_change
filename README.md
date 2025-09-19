@@ -11,6 +11,15 @@ Follow these steps to get started with this project in Google Colab:
 ### Clone the Repository
 Clone the project repository by running the appropriate command to copy the project files to your local environment.
 
+## Getting Started
+Follow these steps to get started with this project in Google Colab:
+
+### Clone the Repository
+Clone the repository and move into the project directory:
+
+git clone https://github.com/protosome/convergent_overlaps_aa_change.git
+cd convergent_overlaps_aa_change
+
 ### Setup
 Navigate to the required directory and download the necessary model weights. Extract the downloaded weights and navigate back to the project directory.
 
@@ -40,6 +49,7 @@ This project is licensed under the MIT License. See the LICENSE file for details
 
 ## Acknowledgments
 - **S4Pred**: For secondary structure prediction.
+- **ESM-2**: for contact-map embeddings.
 - **BioPython**: For sequence analysis and manipulation.
 
 ---
