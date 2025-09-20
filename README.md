@@ -4,7 +4,7 @@
 
 
 ## Project Overview
-This project, **Designing Convergent Overlapping Genes**, is focused on analyzing overlapping amino acid sequences and predicting DNA back-translation. The core functionality involves training and using transformer encoder-based models to predict overlapping DNA sequences that encode two given amino acid sequences. The integrates secondary structure prediction using S4Pred and long-range contacts via ESM-2 contact maps.
+This project, **Designing Convergent Overlapping Genes**, is focused on analyzing overlapping amino acid sequences and predicting DNA back-translation. The core functionality involves training and using transformer encoder-based models to predict overlapping DNA sequences that encode two given amino acid sequences. The integrates secondary structure prediction using S4PRED and long-range contacts via ESM-2 contact maps.
 
 ## Getting Started
 Follow these steps to get started with this project in Google Colab, which is currently the fastest way to get started. It can be run locally with a supported GPU, however currently this will require updates to file paths in the notebook as appropriate.
@@ -65,7 +65,7 @@ From the output file, the "translated_integrated_seq_1" and "translated_integrat
 This project is licensed under the MIT License. See the LICENSE file for details.
 
 ## Acknowledgments
-- **S4Pred**: For secondary structure prediction.
+- **S4PRED**: For secondary structure prediction.
 - **ESM-2**: for contact-map embeddings.
 - **BioPython**: For sequence analysis and manipulation.
 
@@ -73,7 +73,7 @@ This project is licensed under the MIT License. See the LICENSE file for details
 
 This project makes use of the following external repositories and packages. If you use this work in academic research, please also cite the corresponding publications where applicable:
 
-- S4Pred (secondary structure prediction). Repository: https://github.com/psipred/s4pred. Reference: Moffat L, Jones DT. Increasing the accuracy of single sequence prediction methods using a deep semi-supervised learning framework. Xu J, editor. Bioinformatics. 2021 Nov 5;37(21):3744–51.  
+- S4PRED (secondary structure prediction). Repository: https://github.com/psipred/s4pred. Reference: Moffat L, Jones DT. Increasing the accuracy of single sequence prediction methods using a deep semi-supervised learning framework. Xu J, editor. Bioinformatics. 2021 Nov 5;37(21):3744–51.  
 
 - ESM-2 (Evolutionary Scale Modeling). Repository: https://github.com/facebookresearch/esm and https://huggingface.co/facebook/esm2_t12_35M_UR50D (for models). Reference: Lin Z, Akin H, Rao R, et al. Language models of protein sequences at the scale of evolution enable accurate structure prediction. Science. 2023 Mar 17;379(6637):1123–30.
 
