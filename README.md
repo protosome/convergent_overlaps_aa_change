@@ -7,7 +7,7 @@
 This project, **Convergent Overlaps AA Change**, is focused on analyzing overlapping amino acid sequences and predicting DNA back-translation. The core functionality involves training and using transformer encoder-based models to predict overlapping DNA sequences that encode two given amino acid sequences. The integrates secondary structure prediction using S4Pred and long-range contacts via ESM-2 contact maps.
 
 ## Getting Started
-Follow these steps to get started with this project in Google Colab, which is currently the fastest way to get started. It can be run locally with a supported GPU, however currently this will require updates to file paths in the notebook as appropriate.
+Follow these steps to get started with this project in Google Colab, which is currently the fastest way to get started. It can be run locally with a supported GPU, however currently this will require updates to file paths in the notebook as appropriate. Of note, if running locally, running inference is not generally limited by VRAM unless you have opted for a large ESM-2 model for contact map generation. Accordingly, a modern consumer-grade GPU from NVIDIA with a high number of CUDA cores will afford more rapid inference and overlap generation.
 
 ## Running the Notebook in Colab
 Click on the "Open In Colab" badge at the top of this README to open the notebook in Google Colab and start running the code interactively.
