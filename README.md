@@ -1,10 +1,10 @@
-# Convergent Overlaps AA Change - README
+# Designing Convergent Overlapping Genes - README
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/protosome/convergent_overlaps_aa_change/blob/main/convergent_overlapping_gene_generation.ipynb)
 
 
 ## Project Overview
-This project, **Convergent Overlaps AA Change**, is focused on analyzing overlapping amino acid sequences and predicting DNA back-translation. The core functionality involves training and using transformer encoder-based models to predict overlapping DNA sequences that encode two given amino acid sequences. The integrates secondary structure prediction using S4Pred and long-range contacts via ESM-2 contact maps.
+This project, **Designing Convergent Overlapping Genes**, is focused on analyzing overlapping amino acid sequences and predicting DNA back-translation. The core functionality involves training and using transformer encoder-based models to predict overlapping DNA sequences that encode two given amino acid sequences. The integrates secondary structure prediction using S4Pred and long-range contacts via ESM-2 contact maps.
 
 ## Getting Started
 Follow these steps to get started with this project in Google Colab, which is currently the fastest way to get started. It can be run locally with a supported GPU, however currently this will require updates to file paths in the notebook as appropriate.
@@ -80,4 +80,4 @@ This project makes use of the following external repositories and packages. If y
 - Biopython. Repository: https://github.com/biopython/biopython. Reference: Cock PJA, Antao T, Chang JT, et al. Biopython: freely available Python tools for computational molecular biology and bioinformatics. Bioinformatics, 2009.
 
 ---
-This README should provide you with the information you need to get started with the Convergent Overlaps AA Change project. If you encounter any issues or have questions, please feel free to reach out or open an issue on GitHub.
+This README should provide you with the information you need to get started with the **Designing Convergent Overlapping Genes** project. If you encounter any issues or have questions, please feel free to reach out or open an issue on GitHub.
