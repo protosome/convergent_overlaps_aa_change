@@ -4,7 +4,7 @@
 
 
 ## Project Overview
-This project, **Designing Convergent Overlapping Genes**, is focused on analyzing overlapping amino acid sequences and predicting DNA back-translation. The core functionality involves training and using transformer encoder-based models to predict overlapping DNA sequences that encode two given amino acid sequences. The multi-objective optimization process integrates secondary structure predictions using S4PRED, long-range contacts via ESM-2 contact maps, alignment scores, and substitution scores.
+This project, **Designing Convergent Overlapping Genes**, is focused on analyzing overlapping amino acid sequences and predicting DNA back-translation. The core functionality involves training and using transformer encoder-based models to predict overlapping DNA sequences that encode two given amino acid sequences. The multi-objective optimization process integrates secondary structure predictions using S4PRED, long-range contacts using ESM-2 contact maps, alignment scores, and substitution scores.
 
 ## Getting Started
 Follow these steps to get started with this project in Google Colab, which is currently the fastest way to get started. It can be run locally with a supported GPU, however currently this will require updates to file paths in the notebook as appropriate.
