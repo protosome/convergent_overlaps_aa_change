@@ -12,7 +12,7 @@ Follow these steps to get started with this project in Google Colab, which is cu
 Of note, if running locally:
 
 - Running inference is not generally limited by VRAM unless you opt for a large ESM-2 model for contact map generation.
-- A modern consumer-grade NVIDIA GPU with a high number of CUDA cores will typically provide faster inference and overlap generation.
+- A modern consumer-grade NVIDIA GPU with a high number of CUDA cores will typically provide faster inference and overlap generation than the GPUs offered in Google Colab.
 
 ## Running the Notebook in Colab
 Click on the "Open In Colab" badge at the top of this README to open the notebook in Google Colab and start running the code interactively.
