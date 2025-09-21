@@ -27,14 +27,16 @@ Follow these steps to get started with this project in Google Colab:
 Clone the repository as well as other required dependencies (eg, biopython, fair-esm, and s4pred):
 
 ```bash
-git clone https://github.com/protosome/convergent_overlaps_aa_change.git
-cd /content/convergent_overlaps_aa_change/
-pip install biopython
-pip install fair-esm
-cd /content/convergent_overlaps_aa_change/s4pred
-wget http://bioinfadmin.cs.ucl.ac.uk/downloads/s4pred/weights.tar.gz
-tar -xvzf weights.tar.gz
-cd /content/convergent_overlaps_aa_change/
+!git clone https://github.com/protosome/convergent_overlaps_aa_change.git
+%cd convergent_overlaps_aa_change
+from paths import ROOT_DIR
+print("Root dir is:", ROOT_DIR)
+!pip install biopython
+!pip install fair-esm
+%cd {ROOT_DIR}/s4pred
+!wget http://bioinfadmin.cs.ucl.ac.uk/downloads/s4pred/weights.tar.gz
+!tar -xvzf weights.tar.gz
+%cd {ROOT_DIR}
 ```
 
 ### Tokenization and Text Vectorization
