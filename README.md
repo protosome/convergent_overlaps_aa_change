@@ -45,8 +45,39 @@ To work with the sequences, you will need to tokenize and vectorize them. Tokeni
 ### Predict Overlapping Sequence for Two Amino Acid Sequences
 The main functionality of this project is to predict overlapping DNA sequences for two given amino acid sequences. This is done using transformer-based models trained specifically for this purpose. An overlap length from 199 to 312 may be user specified when generating and optimizing the overlap.
 
-### Sequence Inputs
-An Excel (.xlsx) or CSV file containing two amino acid sequences (minimum length: 105 amino acids each) in the columns" "**aa_seq_1**" and "**aa_seq_2**". 
+### Input File Format
+
+Provide an Excel (`.xlsx`) or CSV file with two amino acid sequences (minimum length: **105 amino acids each**).  
+
+- **Required columns:**
+  - `aa_seq_1`  
+  - `aa_seq_2`
+
+- **Optional preservation columns:**  
+  You may mark specific amino acids to **preserve** during overlap generation by placing them in square brackets.  
+
+  **Example:**  
+  - Sequence: `MRTSSRT`  
+  - Preserved form: `MR[TS]SRT` → amino acids **TS** will be preserved.  
+
+  Add these bracketed sequences to:  
+  - `aa_seq_1_brackets`  
+  - `aa_seq_2_brackets`
+
+> ⚠️ If both sequences specify preserved residues at the same relative position, this can create conflicts and reduce the chance of generating valid overlaps.  
+
+If no preservation is required, simply **copy the same input sequences** into the bracket columns.
+
+---
+
+### Demo Table
+
+| aa_seq_1     | aa_seq_2     | aa_seq_1_brackets | aa_seq_2_brackets |
+|--------------|--------------|-------------------|-------------------|
+| MRTSSRT...   | QLGDVKP...   | MR[TS]SRT...      | QLGD[VK]P...      |
+| AGPLMNQ...   | RTYKSDH...   | AGPLMNQ...        | RTYKSDH...        |
+
+*(“...” indicates continuation; each sequence must be ≥105 amino acids long.)*
 
 If desired, amino acids can be designated for preservation by placing square brackets around them. For example, given the sequence MRTSSRT, writing MR[TS]SRT will preserve the amino acids TS during overlap generation and optimization. Add these to columns "**aa_seq_1_brackets**" and "**aa_seq_2_brackets**". Note: if both sequences contain preserved residues at the same relative position, this may create conflicts and reduce the feasibility of generating valid overlaps.
 
