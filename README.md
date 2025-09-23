@@ -90,7 +90,7 @@ After running, one excel file will be generated per row from the input file. Eac
 From the output file, the "**translated_integrated_seq_1**" and "**translated_integrated_seq_2**" columns contain the full integrated amino acid sequences, and the "**integrated_seq_1**" and "**integrated_seq_2**" columns contain the integrated full DNA sequences for both, amino acid sequences, respectively. These are the DNA sequences that include the convergent overlaps.
 
 ## Repository Structure
-- **analysis.ipynb**: Main notebook for running the analysis.
+- **convergent_overlapping_gene_generation.ipynb**: Main notebook for running the analysis.
 - **s4pred/**: Directory containing scripts and model weights for secondary structure prediction.
 - **aa_change_model_set/**: Directory containing model data files.
 - **protsub_matrix.py** and **blosum62_matrix.py**: Modules for similarity calculations.
