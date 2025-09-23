@@ -67,7 +67,7 @@ Provide an Excel (`.xlsx`) or CSV file with two amino acid sequences (minimum le
 
 > ⚠️ If both sequences specify preserved residues at the same relative position, this can create conflicts and reduce the chance of generating valid overlaps.  
 
-If no preservation is required, simply **copy the same input sequences** into the bracket columns.
+If no preservation is required, you can simply **copy the same input sequences** into the bracket columns or do not include in the input file.
 
 ---
 
