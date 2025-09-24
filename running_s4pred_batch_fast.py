@@ -5,9 +5,11 @@ import tempfile
 from typing import List, Optional, Tuple
 from tqdm import tqdm
 
+s4pred_path = ROOT_DIR / "s4pred"
+
 S4PRED_PY   = sys.executable
-S4PRED_CWD  = "{ROOT_DIR}/s4pred"
-S4PRED_EXEC = "{ROOT_DIR}/s4pred/run_model_new.py"
+S4PRED_CWD  = s4pred_path
+S4PRED_EXEC = s4pred_path / "run_model_new.py"
 
 def _write_fasta_indexed(indexed_seqs: List[Tuple[int, str]]) -> str:
     tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".fasta", prefix="s4pred_")
