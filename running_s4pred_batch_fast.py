@@ -4,6 +4,8 @@ import sys
 import tempfile
 from typing import List, Optional, Tuple
 from tqdm import tqdm
+from paths import ROOT_DIR
+
 
 s4pred_path = ROOT_DIR / "s4pred"
 
