@@ -179,7 +179,6 @@ def _predict_batch(batch_datas):
             logits = logits.unsqueeze(0)
             
         # move out of log space and (re)normalize for numerical hygiene
-        # logits were log-probs in your original; if they are raw logits, softmax instead of exp+renorm
         conf = logits.exp()
         conf = conf / conf.sum(dim=-1, keepdim=True)
 
@@ -244,7 +243,7 @@ for start in range(0, N, bs):
                 for line in lines:
                     f.write(line + '\n')
 
-    # Optional second format per your original logic
+    # Optional second format
     if len(args_dict['outfmt2']) > 2:
         for j, (ss, ss_conf) in enumerate(preds):
             data = chunk[j]
