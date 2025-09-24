@@ -80,10 +80,6 @@ If no preservation is required, you can simply **copy the same input sequences**
 
 *(“...” indicates continuation; each sequence must be ≥105 amino acids long.)*
 
-If desired, amino acids can be designated for preservation by placing square brackets around them. For example, given the sequence MRTSSRT, writing MR[TS]SRT will preserve the amino acids TS during overlap generation and optimization. Add these to columns "**aa_seq_1_brackets**" and "**aa_seq_2_brackets**". Note: if both sequences contain preserved residues at the same relative position, this may create conflicts and reduce the feasibility of generating valid overlaps.
-
-If no sequence preservation is required, simply copy the same input sequence into the bracket columns.
-
 ### Output
 After running, one excel file will be generated per row from the input file. Each file will contain every amino acid pair from the windowed optimization process. To start, the recommendation is to sort for the higest value in the "combined score" column. However, given the stochastic nature of the optimization process, it is not safe to assume tha the final sequence pair predicted will be the best.
 
