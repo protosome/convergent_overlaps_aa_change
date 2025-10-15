@@ -96,7 +96,7 @@ This project is licensed under the MIT License. See the LICENSE file for details
 
 ## Acknowledgments
 - **S4PRED**: For secondary structure prediction.
-- **ESM-2**: for contact-map embeddings.
+- **ESM-2**: For contact-map embeddings.
 - **BioPython**: For sequence analysis and manipulation.
 
 ## Dependencies and Citations
