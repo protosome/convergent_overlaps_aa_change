@@ -18,12 +18,6 @@ Of note, if running locally:
 ## Running the Notebook in Colab
 Click on the "Open In Colab" badge at the top of this README to open the notebook in Google Colab and start running the code interactively.
 
-### Clone the Repository
-Clone the project repository by running the appropriate command to copy the project files to your local environment.
-
-## Getting Started
-Follow these steps to get started with this project in Google Colab:
-
 ### Clone the Repositories and Install Required Dependencies 
 Clone the repository as well as other required dependencies (eg, biopython, fair-esm, and s4pred):
 
