@@ -38,7 +38,7 @@ print("Root dir is:", ROOT_DIR)
 To work with the sequences, you will need to tokenize and vectorize them. Tokenization is necessary to convert sequences into a numerical format that the model can understand, while vectorization ensures that all sequences are of consistent length for processing. This is done automatically with the provided tokenizers.
 
 ### Predict Overlapping Sequence for Two Amino Acid Sequences
-The main functionality of this project is to predict overlapping DNA sequences for two given amino acid sequences. This is done using transformer-based models trained specifically for this purpose. An overlap length from 199 to 312 may be user specified when generating and optimizing the overlap.
+The main functionality of this project is to predict overlapping DNA sequences for two given amino acid sequences. This is done using transformer-based models trained specifically for this purpose. An overlap length from 199 to 312 nucleotides may be user specified when generating and optimizing the overlap.
 
 ### Input File Format
 
