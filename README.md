@@ -5,7 +5,7 @@
 ![Scrolling MSA](assets/msa_scroll_side_by_side.gif)
 
 ## Project Overview
-This project, **Designing Convergent Overlapping Genes**, is focused on analyzing overlapping amino acid sequences and predicting DNA back-translation. The core functionality involves training and using transformer encoder-based models to predict overlapping DNA sequences that encode two given amino acid sequences. The multi-objective optimization process integrates secondary structure predictions using S4PRED, long-range contacts using ESM-2 contact maps, alignment scores, and substitution scores.
+This project, **Designing Convergent Overlapping Genes**, is focused on generating overlapping amino acid sequences, with the main functionality being to predict overlapping DNA sequences for two given amino acid sequences. This is done using transformer-based models trained specifically for this purpose. An overlap length from 199 to 312 nucleotides may be user specified when generating and optimizing the overlap. The multi-objective optimization process integrates secondary structure predictions using S4PRED, long-range contacts using ESM-2 contact maps, alignment scores, and substitution scores.
 
 ## Getting Started
 Follow these steps to get started with this project in Google Colab, which is currently the fastest way to start predicting convergent overlaps. It can be run locally with a supported GPU, however currently this will require updates to file paths in the notebook as appropriate.
@@ -36,9 +36,6 @@ print("Root dir is:", ROOT_DIR)
 
 ### Tokenization and Text Vectorization
 To work with the sequences, you will need to tokenize and vectorize them. Tokenization is necessary to convert sequences into a numerical format that the model can understand, while vectorization ensures that all sequences are of consistent length for processing. This is done automatically with the provided tokenizers.
-
-### Predict Overlapping Sequence for Two Amino Acid Sequences
-The main functionality of this project is to predict overlapping DNA sequences for two given amino acid sequences. This is done using transformer-based models trained specifically for this purpose. An overlap length from 199 to 312 nucleotides may be user specified when generating and optimizing the overlap.
 
 ### Input File Format
 
