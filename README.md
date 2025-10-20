@@ -75,7 +75,7 @@ If no preservation is required, you can simply **copy the same input sequences**
 *(“...” indicates continuation; each sequence must be ≥105 amino acids long.)*
 
 ### Output
-After running, one excel file will be generated per row from the input file. Each file will contain every amino acid pair from the windowed optimization process. To start, the recommendation is to sort for the higest value in the "combined score" column. However, given the stochastic nature of the optimization process, it is not safe to assume tha the final sequence pair predicted will be the best.
+After running, one excel file will be generated per row from the input file. Each file will contain every amino acid pair from the windowed optimization process. To start, the recommendation is to sort for the higest value in the "combined score" column. However, given the stochastic nature of the optimization process, it is not safe to assume that the final sequence pair predicted will be the best.
 
 From the output file, the "**translated_integrated_seq_1**" and "**translated_integrated_seq_2**" columns contain the full integrated amino acid sequences, and the "**integrated_seq_1**" and "**integrated_seq_2**" columns contain the integrated full DNA sequences for both amino acid sequences, respectively. These are the DNA sequences that include the convergent overlaps.
 
