@@ -39,7 +39,7 @@ To work with the sequences, you will need to tokenize and vectorize them. Tokeni
 
 ### Input File Format
 
-Provide an Excel (`.xlsx`) or CSV file with two amino acid sequences (minimum length: **105 amino acids each**).  
+Provide an Excel (`.xlsx`) or CSV file with two amino acid sequences (minimum length: **105 amino acids each**). Batched sequences can be run by including additional sequence pairs in additional rows.
 
 - **Required columns:**
   - `aa_seq_1`  
