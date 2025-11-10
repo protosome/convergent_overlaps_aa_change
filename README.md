@@ -100,5 +100,13 @@ This project makes use of the following external repositories and packages. If y
 
 - Biopython. Repository: https://github.com/biopython/biopython. Reference: Cock PJA, Antao T, Chang JT, et al. Biopython: freely available Python tools for computational molecular biology and bioinformatics. Bioinformatics, 2009.
 
+## Citation
+
+If you use this in your work, please cite the following link to the work:
+
+**Designing Convergent Overlapping Genes with Transformer Encoder Models and Lightweight Structural Proxies**
+Jason K. Morgan; bioRxiv, 11-2025, DOI:https://doi.org/10.1101/2025.11.07.687268
+
+
 ---
 This README should provide you with the information you need to get started with the **Designing Convergent Overlapping Genes** project. If you encounter any issues or have questions, please feel free to reach out or open an issue on GitHub.
