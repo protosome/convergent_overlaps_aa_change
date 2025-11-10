@@ -102,7 +102,7 @@ This project makes use of the following external repositories and packages. If y
 
 ## Citation
 
-If you use this in your work, please cite the following link to the work:
+If you use this in your work, please cite the following:
 
 **Designing Convergent Overlapping Genes with Transformer Encoder Models and Lightweight Structural Proxies**
 Jason K. Morgan; bioRxiv, 11-2025, DOI:https://doi.org/10.1101/2025.11.07.687268
