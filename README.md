@@ -90,7 +90,7 @@ This project is licensed under the MIT License. See the LICENSE file for details
 - **ESM-2**: For contact-map embeddings.
 - **BioPython**: For sequence analysis and manipulation.
 
-## Dependencies and Citations
+## Dependencies
 
 This project makes use of the following external repositories and packages. If you use this work in academic research, please also cite the corresponding publications where applicable:
 
