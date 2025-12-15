@@ -39,7 +39,7 @@ print("Root dir is:", ROOT_DIR)
 ```
 
 ### Tokenization and Text Vectorization
-To work with the sequences, you will need to tokenize and vectorize them. Tokenization is necessary to convert sequences into a numerical format that the model can understand, while vectorization ensures that all sequences are of consistent length for processing. This is done automatically with the provided tokenizers.
+To work with the sequences, you will need to tokenize and vectorize them. This is done automatically with the provided tokenizers. Tokenization is necessary to convert sequences into a numerical format that the model can understand, while vectorization ensures that all sequences are of consistent length for processing.
 
 ### Input File Format
 
