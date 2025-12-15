@@ -7,7 +7,7 @@
 ## Project Overview
 This project is focused on **generating convergent (tail-to-tail) overlapping genes**, with the main functionality being to predict and optimize overlapping DNA sequences for two given amino acid sequences. This is done using transformer-based models trained specifically for this purpose. An overlap length from 199 to 312 nucleotides may be user specified when generating and optimizing the overlap. The multi-objective optimization process integrates secondary structure predictions using S4PRED, long-range contacts using ESM-2 contact maps, alignment scores, and substitution scores. 
 
-A more detailed overview can be found in the preprint located here: (**Designing Convergent Overlapping Genes with Transformer Encoder Models and Lightweight Structural Proxies**: https://doi.org/10.1101/2025.11.07.687268). 
+A more detailed overview can be found in the preprint located here: **Designing Convergent Overlapping Genes with Transformer Encoder Models and Lightweight Structural Proxies**: https://doi.org/10.1101/2025.11.07.687268 
 
 If you use the code from this repository or the results, please cite the preprint.
 
