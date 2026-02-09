@@ -12,9 +12,7 @@ A more detailed overview can be found in the preprint located here: **Designing 
 If you use the code from this repository or the results, please cite the preprint.
 
 ## Getting Started
-Follow these steps to get started with this project in Google Colab, which is currently the fastest way to start predicting convergent overlaps. It can be run locally with a supported GPU, however currently this will require updates to file paths in the notebook as appropriate.
-
-Of note, if running locally:
+Follow these steps to get started with this project in Google Colab, which is currently the fastest way to start predicting convergent overlaps without dedicated hardware. It can be run locally with a supported GPU. Of note, if running locally:
 
 - Running inference is not generally limited by VRAM unless you opt for a large ESM-2 model for contact map generation.
 - A modern consumer-grade NVIDIA GPU with a high number of CUDA cores will typically provide faster inference and overlap generation than the GPUs offered in Google Colab.
