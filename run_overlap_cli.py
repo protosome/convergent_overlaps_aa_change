@@ -134,6 +134,12 @@ def parse_args() -> argparse.Namespace:
         default=False,
         help="Print detailed model-loading and inference checkpoints.",
     )
+    parser.add_argument(
+        "--auto-setup",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Automatically run setup when required deps/weights are missing (default: enabled).",
+    )
     return parser.parse_args()
 
 
@@ -345,6 +351,23 @@ def _remap_model_paths(runtime: dict, root_dir: Path) -> None:
         )
 
 
+def _validate_s4pred_runtime(runtime: dict, root_dir: Path) -> None:
+    s4pred_dir = root_dir / "s4pred"
+    if not s4pred_dir.exists():
+        raise RuntimeError(f"s4pred directory is missing: {s4pred_dir}")
+
+    fn = runtime.get("predict_secondary_structure")
+    if fn is None:
+        return
+    consts = {c for c in getattr(fn, "__code__", object()).co_consts or () if isinstance(c, str)}
+    legacy = "/content/convergent_overlaps_aa_change/s4pred"
+    if legacy in consts:
+        raise RuntimeError(
+            "Legacy Colab S4PRED path detected in running_s4pred.py. "
+            "Expected local ROOT_DIR/s4pred. Update running_s4pred.py to use paths.ROOT_DIR."
+        )
+
+
 def _print_model_checkpoint(runtime: dict, length: int) -> None:
     model_data = runtime.get("model_data")
     if model_data is None:
@@ -431,6 +454,19 @@ def main() -> int:
     missing_required, missing_optional = _check_dependencies()
     missing_weights = _missing_weight_files(root_dir)
 
+    needs_setup = bool(missing_required or missing_weights)
+    if args.auto_setup and needs_setup and not args.setup_only and not args.setup:
+        print("[INFO] Missing requirements detected; running automatic setup.")
+        _run_setup(
+            root_dir,
+            missing_required,
+            missing_optional,
+            weights_url=args.weights_url,
+            force_weights_download=bool(args.force_weights_download),
+        )
+        missing_required, missing_optional = _check_dependencies()
+        missing_weights = _missing_weight_files(root_dir)
+
     if args.setup or args.setup_only:
         _run_setup(
             root_dir,
@@ -486,6 +522,7 @@ def main() -> int:
         raise RuntimeError("Missing required notebook functions: load_pairs_table or optimize_pair_and_save.")
 
     _remap_model_paths(runtime, root_dir)
+    _validate_s4pred_runtime(runtime, root_dir)
     if args.debug_checkpoints:
         _enable_debug_checkpoints(runtime)
 
