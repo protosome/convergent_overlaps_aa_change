@@ -19,6 +19,108 @@ Of note, if running locally:
 - Running inference is not generally limited by VRAM unless you opt for a large ESM-2 model for contact map generation.
 - A modern consumer-grade NVIDIA GPU with a high number of CUDA cores will typically provide faster inference and overlap generation than the GPUs offered in Google Colab.
 
+## Running from CLI (No Colab Form)
+Use `run_overlap_cli.py` to run the same pipeline without the Colab form UI.
+
+### Quick start
+
+```bash
+python run_overlap_cli.py \
+  --excel-path test_results/aa_1_aa_2.xlsx \
+  --working-dir test_results \
+  --overlap-length-selected 310
+```
+
+### Validate environment only
+
+```bash
+python run_overlap_cli.py --check-only \
+  --excel-path test_results/aa_1_aa_2.xlsx \
+  --working-dir test_results
+```
+
+### Full CLI options (for reference)
+- `-h, --help`: show help.
+- `--working-dir WORKING_DIR`: output directory for run artifacts and archives.
+- `--excel-path EXCEL_PATH`: input `.xlsx`, `.xls`, or `.csv` path.
+- `--overlap-length-selected OVERLAP_LENGTH_SELECTED`: one length or comma-separated lengths (example: `310` or `310,311`).
+- `--start-row START_ROW`: 1-based start row.
+- `--end-row END_ROW`: 1-based end row; use `0` to process to end.
+- `--use-row-weights` / `--no-use-row-weights`: enable/disable per-row `ss/sub/aln/esm` weights from the input file.
+- `--ss-w SS_W`: override SS weight.
+- `--sub-w SUB_W`: override substitution weight.
+- `--aln-w ALN_W`: override alignment weight.
+- `--esm-w ESM_W`: override ESM weight.
+- `--normalize-override-weights` / `--no-normalize-override-weights`: normalize override weights to sum to 1.
+- `--first-pass-iters FIRST_PASS_ITERS`: first-pass optimization iterations.
+- `--second-pass-iters SECOND_PASS_ITERS`: second-pass optimization iterations.
+- `--reset-caches-per-row` / `--no-reset-caches-per-row`: reset internal caches between rows.
+- `--archive` / `--no-archive`: enable/disable zip archive creation.
+- `--notebook-path NOTEBOOK_PATH`: notebook file used as function runtime source.
+- `--check-only` / `--no-check-only`: validate dependencies/paths and exit.
+- `--setup` / `--no-setup`: run dependency + S4PRED weights setup before run/check.
+- `--setup-only` / `--no-setup-only`: run setup and exit.
+- `--weights-url WEIGHTS_URL`: override S4PRED weights tarball URL.
+- `--force-weights-download` / `--no-force-weights-download`: re-download weights even if present.
+- `--debug-checkpoints` / `--no-debug-checkpoints`: print detailed model-loading and inference checkpoints.
+- `--auto-setup` / `--no-auto-setup`: auto-run setup if required deps/weights are missing.
+- `--esm-device {auto,cuda,cpu}`: ESM device selection.
+- `--esm-batch-size ESM_BATCH_SIZE`: ESM batch size (lower is safer for CUDA stability).
+- `--esm-autocast` / `--no-esm-autocast`: fp16 autocast for ESM CUDA path.
+- `--require-esm` / `--no-require-esm`: fail fast if ESM cannot be computed.
+
+### Command examples
+
+Strict ESM-on-CUDA run (fail if ESM fails):
+
+```bash
+python run_overlap_cli.py \
+  --excel-path test_results/aa_1_aa_2.xlsx \
+  --working-dir test_results \
+  --overlap-length-selected 310 \
+  --esm-device cuda \
+  --no-esm-autocast \
+  --esm-batch-size 1 \
+  --require-esm \
+  --debug-checkpoints
+```
+
+Force setup only:
+
+```bash
+python run_overlap_cli.py --setup --setup-only \
+  --excel-path test_results/aa_1_aa_2.xlsx \
+  --working-dir test_results
+```
+
+Process multiple overlap lengths and full row range:
+
+```bash
+python run_overlap_cli.py \
+  --excel-path test_results/aa_1_aa_2.xlsx \
+  --working-dir test_results \
+  --overlap-length-selected 310,311,312 \
+  --start-row 1 \
+  --end-row 0
+```
+
+### GPU compatibility note (important)
+If you see errors like:
+- `NVIDIA ... sm_120 is not compatible with the current PyTorch installation`
+- `CUDA error: no kernel image is available for execution on the device`
+
+then your PyTorch CUDA build does not support your GPU architecture. Install a newer PyTorch CUDA wheel (often nightly for very new GPUs), then verify support:
+
+```bash
+python - <<'PY'
+import torch
+print("torch:", torch.__version__, "cuda:", torch.version.cuda)
+print("arch list:", torch.cuda.get_arch_list() if torch.cuda.is_available() else "cpu-only")
+PY
+```
+
+Your GPU arch (for example `sm_120`) must appear in `torch.cuda.get_arch_list()` for ESM on CUDA to work.
+
 ## Running the Notebook in Colab
 Click on the "Open In Colab" badge at the top of this README to open the notebook in Google Colab and start running the code interactively.
 
