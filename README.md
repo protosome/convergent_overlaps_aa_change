@@ -22,6 +22,15 @@ Of note, if running locally:
 ## Running from CLI (No Colab Form)
 Use `run_overlap_cli.py` to run the same pipeline without the Colab form UI.
 
+### Recommended fresh download (important)
+Use this exact download flow before CLI setup/run:
+
+```bash
+wget https://github.com/protosome/convergent_overlaps_aa_change/archive/refs/heads/main.zip
+unzip main.zip
+cd convergent_overlaps_aa_change-main
+```
+
 ### Quick start
 
 ```bash
@@ -39,7 +48,7 @@ python run_overlap_cli.py --check-only \
   --working-dir test_results
 ```
 
-### Full CLI options (for reference)
+### Full CLI options (reference)
 - `-h, --help`: show help.
 - `--working-dir WORKING_DIR`: output directory for run artifacts and archives.
 - `--excel-path EXCEL_PATH`: input `.xlsx`, `.xls`, or `.csv` path.
