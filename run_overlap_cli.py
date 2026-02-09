@@ -140,6 +140,30 @@ def parse_args() -> argparse.Namespace:
         default=True,
         help="Automatically run setup when required deps/weights are missing (default: enabled).",
     )
+    parser.add_argument(
+        "--esm-device",
+        choices=["auto", "cuda", "cpu"],
+        default="auto",
+        help="Device for ESM features. 'auto' tries CUDA then falls back to CPU if needed.",
+    )
+    parser.add_argument(
+        "--esm-batch-size",
+        type=int,
+        default=4,
+        help="ESM batch size (lower values are safer for CUDA stability).",
+    )
+    parser.add_argument(
+        "--esm-autocast",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable fp16 autocast for ESM on CUDA (default: disabled for stability).",
+    )
+    parser.add_argument(
+        "--require-esm",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Fail fast if ESM features cannot be computed for a row (default: enabled).",
+    )
     return parser.parse_args()
 
 
@@ -436,6 +460,83 @@ def _enable_debug_checkpoints(runtime: dict) -> None:
     print("[CHKPT] Debug checkpoints enabled.", file=sys.__stderr__)
 
 
+def _configure_and_validate_esm(runtime: dict, args: argparse.Namespace) -> None:
+    """
+    Configure ESM runtime knobs and validate ESM can produce features.
+    Falls back from CUDA -> CPU in auto mode if CUDA ESM fails.
+    """
+    if not runtime.get("_ESM_AVAILABLE", False):
+        raise RuntimeError(
+            "ESM is not available in runtime (fair-esm import failed). "
+            "Install with: pip install fair-esm"
+        )
+
+    torch_mod = runtime.get("torch")
+    if torch_mod is None:
+        raise RuntimeError("Torch not available in runtime; cannot configure ESM.")
+
+    want_device = args.esm_device
+    if want_device == "auto":
+        device = torch_mod.device("cuda" if torch_mod.cuda.is_available() else "cpu")
+    else:
+        if want_device == "cuda" and not torch_mod.cuda.is_available():
+            raise RuntimeError("Requested --esm-device cuda but CUDA is not available.")
+        device = torch_mod.device(want_device)
+
+    runtime["ESM_DEVICE"] = device
+    runtime["ESM_BATCH_SIZE"] = max(1, int(args.esm_batch_size))
+    runtime["USE_AUTOCast_FP16_IF_CUDA"] = bool(args.esm_autocast)
+    runtime["USE_MODEL_FP16"] = False
+    print(
+        f"[INFO] ESM config: device={runtime['ESM_DEVICE']} "
+        f"batch_size={runtime['ESM_BATCH_SIZE']} autocast={runtime['USE_AUTOCast_FP16_IF_CUDA']}"
+    )
+
+    test_seq = ["MSTNPKPQRITF"]
+    try:
+        mac = runtime["_load_esm_model"]()
+        runtime["esm_features_cached"](test_seq, model_alphabet_converter=mac)
+        print("[INFO] ESM preflight passed.")
+        return
+    except Exception as e:
+        if args.esm_device == "auto" and device.type == "cuda":
+            print(f"[WARN] ESM CUDA preflight failed, retrying on CPU. Error: {e}")
+            runtime["ESM_DEVICE"] = torch_mod.device("cpu")
+            runtime["USE_AUTOCast_FP16_IF_CUDA"] = False
+            runtime["USE_MODEL_FP16"] = False
+            runtime["ESM_BATCH_SIZE"] = 1
+            try:
+                mac = runtime["_load_esm_model"]()
+                runtime["esm_features_cached"](test_seq, model_alphabet_converter=mac)
+                print("[INFO] ESM preflight passed on CPU fallback.")
+                return
+            except Exception as e2:
+                raise RuntimeError(f"ESM preflight failed on CUDA and CPU fallback. CUDA error: {e}; CPU error: {e2}") from e2
+        raise RuntimeError(f"ESM preflight failed on device={device}. Error: {e}") from e
+
+
+def _ensure_esm_for_row(runtime: dict, seq1: str, seq2: str) -> None:
+    """
+    Validate ESM features for the row's original split sequences.
+    Raises if ESM cannot produce/cache features for either sequence.
+    """
+    s1 = seq1.strip().replace(" ", "").strip("*")
+    s2 = seq2.strip().replace(" ", "").strip("*")
+    concat = runtime["process_sequences"](s1, s2)
+    aa1, aa2 = runtime["split_sequence"](concat)
+    runtime["esm_features_cached"]([aa1, aa2])
+
+    emb_cache = runtime.get("ESM_EMB_CACHE", {})
+    cont_cache = runtime.get("ESM_CONT_CACHE", {})
+    missing = []
+    if aa1 not in emb_cache or aa1 not in cont_cache:
+        missing.append("seq1")
+    if aa2 not in emb_cache or aa2 not in cont_cache:
+        missing.append("seq2")
+    if missing:
+        raise RuntimeError(f"ESM cache missing after feature pass for: {', '.join(missing)}")
+
+
 def main() -> int:
     args = parse_args()
 
@@ -523,6 +624,7 @@ def main() -> int:
 
     _remap_model_paths(runtime, root_dir)
     _validate_s4pred_runtime(runtime, root_dir)
+    _configure_and_validate_esm(runtime, args)
     if args.debug_checkpoints:
         _enable_debug_checkpoints(runtime)
 
@@ -588,6 +690,15 @@ def main() -> int:
             if not isinstance(seq1, str) or not isinstance(seq2, str) or not seq1 or not seq2:
                 print(f"[WARN] Row {row_display_num}: missing/invalid sequences, skipping.")
                 continue
+
+            if args.require_esm:
+                try:
+                    _ensure_esm_for_row(runtime, seq1, seq2)
+                    print(f"[INFO] ESM row precheck passed for row {row_display_num}.")
+                except Exception as e:
+                    raise RuntimeError(
+                        f"ESM is required but failed before optimization for row {row_display_num}: {e}"
+                    ) from e
 
             if args.use_row_weights:
                 try:
