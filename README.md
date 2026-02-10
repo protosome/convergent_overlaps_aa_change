@@ -168,7 +168,7 @@ Current plot control approach:
 - `Recent Events`: latest optimizer events plus SS prediction progress lines (long lines are wrapped across rows).
 
 #### First pass timing note
-During the first window of the first pass, the UI shows a note that this step may take longer because initial prediction/inference warm-up is happening. Subsequent windows and passes should proceed more quickly.
+During the first window of the first pass, the UI shows a note that this step may take longer because initial prediction/inference warm-up is happening (here, the model may be slow to find a compatible sequence to generate both amino acid sequences givne the constraints). Subsequent windows and passes should proceed (much) more quickly.
 
 #### End-of-row recap
 At row completion, a final boxed summary is printed with:
