@@ -124,6 +124,14 @@ python run_overlap_cli.py --check-only \
 
 ### Command examples
 
+Force setup only:
+
+```bash
+python run_overlap_cli.py --setup --setup-only \
+  --excel-path test_results/aa_1_aa_2.xlsx \
+  --working-dir test_results
+```
+
 Run with dual forward/reverse window radar:
 
 ```bash
@@ -136,37 +144,16 @@ python run_overlap_cli.py \
   --plot-metric Combined,SS_avg,ESM_avg
 ```
 
-Strict ESM-on-CUDA run (fail if ESM fails):
-
-```bash
-python run_overlap_cli.py \
-  --excel-path test_results/aa_1_aa_2.xlsx \
-  --working-dir test_results \
-  --overlap-length-selected 310 \
-  --esm-device cuda \
-  --no-esm-autocast \
-  --esm-batch-size 1 \
-  --require-esm \
-  --debug-checkpoints
-```
-
-Force setup only:
-
-```bash
-python run_overlap_cli.py --setup --setup-only \
-  --excel-path test_results/aa_1_aa_2.xlsx \
-  --working-dir test_results
-```
-
 Process multiple overlap lengths and full row range:
 
 ```bash
 python run_overlap_cli.py \
   --excel-path test_results/aa_1_aa_2.xlsx \
   --working-dir test_results \
-  --overlap-length-selected 310,311,312 \
-  --start-row 1 \
-  --end-row 0
+  --overlap-length-selected 310, 311, 312 \
+  --display-mode radar \
+  --display-style boxed \
+  --plot-metric Combined,SS_avg,ESM_avg
 ```
 
 Run with live terminal dashboard and trend plot:
