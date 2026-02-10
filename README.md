@@ -75,7 +75,10 @@ cd convergent_overlaps_aa_change-main
 python run_overlap_cli.py \
   --excel-path test_results/aa_1_aa_2.xlsx \
   --working-dir test_results \
-  --overlap-length-selected 310
+  --overlap-length-selected 310 \
+  --display-mode radar \
+  --display-style boxed \
+  --plot-metric Combined,SS_avg,ESM_avg
 ```
 
 ### Validate environment only
