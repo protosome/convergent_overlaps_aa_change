@@ -39,8 +39,21 @@ The **command-line interface (CLI)** is the primary and recommended way to run t
 - Local execution avoids Colab session limits and enables persistent caching of intermediate results.
 - The CLI provides full access to live **TUI** and **radar** dashboards for long optimization runs.
 
-See the CLI documentation below for installation and usage instructions.
+### Python / Environment (WSL)
+Tested on **WSL2 Ubuntu** with **Python 3.12**.
 
+Use a virtual environment in the repo:
+
+```bash
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+```
+
+If you plan to run ESM on CUDA in WSL:
+- Ensure your **Windows NVIDIA driver** supports WSL CUDA.
+- Ensure your **PyTorch CUDA build** supports your GPU architecture.
+- Keep TensorFlow/PyTorch installs inside the same venv to avoid system-level conflicts.
 ### Google Colab (Optional / Quick Start)
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/protosome/convergent_overlaps_aa_change/blob/main/convergent_overlapping_gene_generation.ipynb)
