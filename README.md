@@ -19,9 +19,16 @@ If you use the code from this repository or the results, please cite the preprin
 ## Getting Started
 The **command-line interface (CLI)** is the primary and recommended way to run this project. It is designed for local execution on a supported GPU and provides the best performance, reproducibility, and control over paths, caching, and batch workflows.
 
-### Local CLI (Recommended)
+## Getting Started (CLI-First)
 
-Running locally via the CLI is typically the fastest and most flexible setup:
+The **command-line interface (CLI)** is the primary and recommended way to run this project. It is designed for local GPU execution and provides the best performance, reproducibility, and control over caching, batch runs, and visualization.
+
+### Why CLI?
+
+- Inference is **not generally VRAM-limited**, unless large ESM-2 models are enabled.
+- A modern consumer-grade NVIDIA GPU typically outperforms Google Colab GPUs.
+- No Colab session limits; persistent local caches.
+- Full access to live TUI and radar dashboards.
 
 - Inference is **not generally VRAM-limited**, unless you explicitly enable large ESM-2 models for contact map generation.
 - A modern consumer-grade NVIDIA GPU with a high CUDA core count will usually outperform the GPUs available in Google Colab for both inference and overlap generation.
