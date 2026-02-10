@@ -83,6 +83,18 @@ python run_overlap_cli.py --check-only \
 
 ### Command examples
 
+Run with dual forward/reverse window radar:
+
+```bash
+python run_overlap_cli.py \
+  --excel-path test_results/aa_1_aa_2.xlsx \
+  --working-dir test_results \
+  --overlap-length-selected 310 \
+  --display-mode radar \
+  --display-style boxed \
+  --plot-metric Combined,SS_avg,ESM_avg
+```
+
 Strict ESM-on-CUDA run (fail if ESM fails):
 
 ```bash
@@ -124,18 +136,6 @@ python run_overlap_cli.py \
   --working-dir test_results \
   --overlap-length-selected 310 \
   --display-mode tui \
-  --plot-metric Combined,SS_avg,ESM_avg
-```
-
-Run with dual forward/reverse window radar:
-
-```bash
-python run_overlap_cli.py \
-  --excel-path test_results/aa_1_aa_2.xlsx \
-  --working-dir test_results \
-  --overlap-length-selected 310 \
-  --display-mode radar \
-  --display-style boxed \
   --plot-metric Combined,SS_avg,ESM_avg
 ```
 
