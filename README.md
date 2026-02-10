@@ -1,7 +1,5 @@
 # Designing Convergent Overlapping Genes - README
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/protosome/convergent_overlaps_aa_change/blob/main/convergent_overlapping_gene_generation.ipynb)
-
 ![Scrolling MSA](assets/msa_scroll_side_by_side.gif)
 
 ## Project Overview
@@ -31,7 +29,9 @@ See the CLI documentation below for installation and usage instructions.
 
 ### Google Colab (Optional / Quick Start)
 
-A Google Colab notebook is provided as a convenience for rapid experimentation or environments without a local GPU. This is currently the fastest way to get running without local setup, but it is not the preferred long-term workflow.
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/protosome/convergent_overlaps_aa_change/blob/main/convergent_overlapping_gene_generation.ipynb)
+
+A Google Colab notebook is provided as a convenience for rapid experimentation or environments without a local GPU. This is currently the fastest way to get running without local setup, but it is not the preferred long-term workflow. Access by clicking the Colab icon above.
 
 ### Recommended fresh download (important)
 Use this exact download flow before CLI setup/run:
