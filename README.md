@@ -12,7 +12,9 @@ A more detailed overview can be found in the preprint located here: **Designing 
 If you use the code from this repository or the results, please cite the preprint.
 
 ## Getting Started
-Follow these steps to get started with this project in Google Colab, which is currently the fastest way to start predicting convergent overlaps without dedicated hardware. It can be run locally with a supported GPU. Of note, if running locally:
+Follow these steps to get started with this project in Google Colab, which is currently the fastest way to start predicting convergent overlaps. It can be run locally with a supported GPU, however currently this will require updates to file paths in the notebook as appropriate.
+
+Of note, if running locally:
 
 - Running inference is not generally limited by VRAM unless you opt for a large ESM-2 model for contact map generation.
 - A modern consumer-grade NVIDIA GPU with a high number of CUDA cores will typically provide faster inference and overlap generation than the GPUs offered in Google Colab.
@@ -75,6 +77,9 @@ python run_overlap_cli.py --check-only \
 - `--esm-batch-size ESM_BATCH_SIZE`: ESM batch size (lower is safer for CUDA stability).
 - `--esm-autocast` / `--no-esm-autocast`: fp16 autocast for ESM CUDA path.
 - `--require-esm` / `--no-require-esm`: fail fast if ESM cannot be computed.
+- `--display-mode {plain,tui,radar}`: `plain` keeps sequential logs; `tui` shows a live dashboard; `radar` adds forward/reverse window tracks.
+- `--display-style {plain,boxed}`: style for live views (`tui`/`radar`); `boxed` provides fixed-height panel layout.
+- `--plot-metric METRIC[,METRIC,...]`: one or more metrics used for live trend(s) in `tui`/`radar` mode. Allowed: `Combined,ESM_avg,SS_avg,Align1,Align2,Sub1,Sub2`.
 
 ### Command examples
 
@@ -110,6 +115,71 @@ python run_overlap_cli.py \
   --start-row 1 \
   --end-row 0
 ```
+
+Run with live terminal dashboard and trend plot:
+
+```bash
+python run_overlap_cli.py \
+  --excel-path test_results/aa_1_aa_2.xlsx \
+  --working-dir test_results \
+  --overlap-length-selected 310 \
+  --display-mode tui \
+  --plot-metric Combined,SS_avg,ESM_avg
+```
+
+Run with dual forward/reverse window radar:
+
+```bash
+python run_overlap_cli.py \
+  --excel-path test_results/aa_1_aa_2.xlsx \
+  --working-dir test_results \
+  --overlap-length-selected 310 \
+  --display-mode radar \
+  --display-style boxed \
+  --plot-metric Combined,SS_avg,ESM_avg
+```
+
+### Live view modes (TUI/Radar)
+The CLI includes two live visual modes designed for long optimization runs:
+
+- `--display-mode tui`: live status + metrics + trends + events.
+- `--display-mode radar`: same as `tui`, plus forward/reverse window tracks.
+
+Recommended style:
+- `--display-style boxed` (default): fixed-size panels so the layout does not jump.
+
+Current plot control approach:
+- Choose one or more trend metrics with `--plot-metric`.
+- Rendering is intentionally simple and stable for long runs; there are no extra plot width/height/mode flags in the current CLI.
+
+#### Radar legend
+- `.` initial/unprocessed region
+- `@` processed in attempt 1
+- `#` processed in attempt 2+
+- `>` active window on forward track
+- `<` active window on reverse track
+
+#### What the live panels show
+- `Status`: attempt/window position, elapsed time, throughput (windows/sec), ETA, and startup timing note for the first window/pass (updated once per window, not continuously live).
+- `Window Radar` (`radar` mode): active AA range and forward/reverse window advancement.
+- `Metrics`: latest `Combined`, `SS1`, `SS2`, `SS_avg`, `ESM1`, `ESM2`, `ESM_avg`, plus deltas vs previous window and best-so-far.
+- `Trends`: one compact per-metric trend line for each metric in `--plot-metric`.
+- `Attempt Summary`: dedicated row for `Final metrics this attempt ...` so it stays visible.
+- `Recent Events`: latest optimizer events plus SS prediction progress lines (long lines are wrapped across rows).
+
+#### First pass timing note
+During the first window of the first pass, the UI shows a note that this step may take longer because initial prediction/inference warm-up is happening. Subsequent windows and passes should proceed more quickly.
+
+#### End-of-row recap
+At row completion, a final boxed summary is printed with:
+- final metrics
+- best window metrics
+- output file path
+
+#### Color notes
+- The live views use ANSI colors by default.
+- If your shell sets `NO_COLOR`, output will be plain text.
+- In very limited terminals, `--display-style plain` may render more cleanly.
 
 ### GPU compatibility note (important)
 If you see errors like:
