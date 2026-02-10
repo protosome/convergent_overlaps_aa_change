@@ -12,7 +12,11 @@ A more detailed overview can be found in the preprint located here: **Designing 
 If you use the code from this repository or the results, please cite the preprint.
 
 ## CLI Live Dashboard Preview
-[![CLI TUI snapshot](assets/tui.png)](assets/tui.png)
+<p align="center">
+    <a href="assets/your_snapshot.png">
+      <img src="assets/your_snapshot.png" alt="CLI TUI snapshot" width="450">
+    </a>
+  </p>
 
 ## Getting Started
 Follow these steps to get started with this project in Google Colab, which is currently the fastest way to start predicting convergent overlaps. It can be run locally with a supported GPU, however currently this will require updates to file paths in the notebook as appropriate.
