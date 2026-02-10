@@ -16,9 +16,6 @@ If you use the code from this repository or the results, please cite the preprin
   <img src="assets/tui.png" alt="CLI TUI snapshot" width="550">
 </a>
 
-## Getting Started
-The **command-line interface (CLI)** is the primary and recommended way to run this project. It is designed for local execution on a supported GPU and provides the best performance, reproducibility, and control over paths, caching, and batch workflows.
-
 ## Getting Started (CLI-First)
 
 The **command-line interface (CLI)** is the primary and recommended way to run this project. It is designed for local GPU execution and provides the best performance, reproducibility, and control over caching, batch runs, and visualization.
