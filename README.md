@@ -209,25 +209,6 @@ PY
 
 Your GPU arch (for example `sm_120`) must appear in `torch.cuda.get_arch_list()` for ESM on CUDA to work.
 
-## Running the Notebook in Colab
-Click on the "Open In Colab" badge at the top of this README to open the notebook in Google Colab and start running the code interactively.
-
-### Clone the Repositories and Install Required Dependencies 
-Clone the repository as well as other required dependencies (eg, biopython, fair-esm, and s4pred):
-
-```bash
-!git clone https://github.com/protosome/convergent_overlaps_aa_change.git
-%cd convergent_overlaps_aa_change
-from paths import ROOT_DIR
-print("Root dir is:", ROOT_DIR)
-!pip install biopython
-!pip install fair-esm
-%cd {ROOT_DIR}/s4pred
-!wget http://bioinfadmin.cs.ucl.ac.uk/downloads/s4pred/weights.tar.gz
-!tar -xvzf weights.tar.gz
-%cd {ROOT_DIR}
-```
-
 ### Tokenization and Text Vectorization
 To work with the sequences, you will need to tokenize and vectorize them. This is done automatically with the provided tokenizers. Tokenization is necessary to convert sequences into a numerical format that the model can understand, while vectorization ensures that all sequences are of consistent length for processing.
 
