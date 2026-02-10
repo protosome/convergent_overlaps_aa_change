@@ -4,16 +4,23 @@
 from __future__ import annotations
 
 import argparse
+import ast
+import builtins
 import importlib.util
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
 import tarfile
+import textwrap
 import time
 import traceback
 import urllib.request
+from collections import deque
+from dataclasses import dataclass, field
+from typing import Callable, TextIO
 from pathlib import Path
 
 import pandas as pd
@@ -21,6 +28,14 @@ from paths import ROOT_DIR
 
 
 S4PRED_WEIGHTS_URL = "http://bioinfadmin.cs.ucl.ac.uk/downloads/s4pred/weights.tar.gz"
+ALLOWED_PLOT_METRICS = ("Combined", "ESM_avg", "SS_avg", "Align1", "Align2", "Sub1", "Sub2")
+SUMMARY_RE = re.compile(r"Summary so far:\s*(\{.*\})")
+WINDOW_RE = re.compile(r"Entering window\s+(\d+)/(\d+)")
+ATTEMPT_RE = re.compile(r"=== Optimization attempt\s+(\d+)/(\d+)\s+===")
+ANSI_RE = re.compile(r"\x1b\[[0-9;]*m")
+WINDOW_AA = 10
+STRIDE_AA = 8
+MODEL_AA = 105
 
 
 def parse_args() -> argparse.Namespace:
@@ -164,7 +179,465 @@ def parse_args() -> argparse.Namespace:
         default=True,
         help="Fail fast if ESM features cannot be computed for a row (default: enabled).",
     )
+    parser.add_argument(
+        "--display-mode",
+        choices=["plain", "tui", "radar"],
+        default="plain",
+        help="Output mode: plain logs (default), live dashboard (tui), or dual-window radar view (radar).",
+    )
+    parser.add_argument(
+        "--display-style",
+        choices=["plain", "boxed"],
+        default="boxed",
+        help="Live view style for tui/radar modes.",
+    )
+    parser.add_argument(
+        "--plot-metric",
+        type=_parse_plot_metrics_arg,
+        default=["Combined"],
+        help=(
+            "Metric(s) to render as live trend plots in --display-mode tui/radar. "
+            "Use a comma-separated list, e.g. Combined,SS_avg,ESM_avg."
+        ),
+    )
     return parser.parse_args()
+
+
+def _parse_plot_metrics_arg(value: str) -> list[str]:
+    parts = [p.strip() for p in value.split(",") if p.strip()]
+    if not parts:
+        raise argparse.ArgumentTypeError("At least one plot metric is required.")
+    bad = [p for p in parts if p not in ALLOWED_PLOT_METRICS]
+    if bad:
+        raise argparse.ArgumentTypeError(
+            f"Invalid plot metric(s): {', '.join(bad)}. Allowed: {', '.join(ALLOWED_PLOT_METRICS)}"
+        )
+    # de-duplicate while preserving order
+    return list(dict.fromkeys(parts))
+
+
+@dataclass
+class TuiState:
+    overlap_length: int
+    row_display_num: int
+    plot_metrics: list[str]
+    display_mode: str = "tui"
+    display_style: str = "boxed"
+    attempt: int = 0
+    total_attempts: int = 0
+    window: int = 0
+    total_windows: int = 0
+    summaries: list[dict] = field(default_factory=list)
+    window_attempt_marks: dict[int, int] = field(default_factory=dict)
+    recent_events: deque[str] = field(default_factory=lambda: deque(maxlen=8))
+    ss_progress: str = ""
+    run_start_ts: float = field(default_factory=time.time)
+    last_summary_ts: float = field(default_factory=time.time)
+    windows_done: int = 0
+    prev_metrics: dict[str, float] = field(default_factory=dict)
+    best_metrics: dict[str, float] = field(default_factory=dict)
+    best_window: int = 0
+    final_attempt_summary: str = ""
+
+    def _color(self, text: str, code: str) -> str:
+        if os.environ.get("NO_COLOR"):
+            return text
+        return f"\x1b[{code}m{text}\x1b[0m"
+
+    def _trend(self, metric: str, width: int = 48) -> tuple[str, float, float, int]:
+        values = [float(s.get(metric, 0.0)) for s in self.summaries if metric in s]
+        if not values:
+            return "(no data yet)", 0.0, 0.0, 0
+        if len(values) > width:
+            values = values[-width:]
+        lo = min(values)
+        hi = max(values)
+        bins = "▁▂▃▄▅▆▇█"
+        if hi - lo < 1e-12:
+            return bins[-1] * len(values), lo, hi, len(values)
+        out: list[str] = []
+        span = hi - lo
+        for v in values:
+            idx = int((v - lo) / span * (len(bins) - 1))
+            out.append(bins[idx])
+        return "".join(out), lo, hi, len(values)
+
+    def _latest_metrics(self) -> dict[str, float]:
+        if not self.summaries:
+            return {}
+        latest = self.summaries[-1]
+        keys = ("Combined", "SS_score1", "SS_score2", "SS_avg", "ESM1", "ESM2", "ESM_avg", "Align1", "Align2")
+        return {k: float(latest[k]) for k in keys if k in latest}
+
+    def _metric_color(self, metric: str) -> str:
+        if self.attempt <= 1:
+            base = {
+                "Combined": "1;92",
+                "SS_avg": "1;93",
+                "ESM_avg": "1;94",
+                "Align1": "1;90",
+                "Align2": "1;90",
+                "Sub1": "1;96",
+                "Sub2": "1;96",
+            }
+        else:
+            base = {
+                "Combined": "1;91",
+                "SS_avg": "1;33",
+                "ESM_avg": "1;95",
+                "Align1": "1;37",
+                "Align2": "1;37",
+                "Sub1": "1;36",
+                "Sub2": "1;36",
+            }
+        return base.get(metric, "1;92")
+
+    def _pass_color(self) -> str:
+        return "1;96" if self.attempt <= 1 else "1;33"
+
+    def _panel(self, title: str, lines: list[str], *, width: int = 84, height: int = 6) -> list[str]:
+        if self.display_style != "boxed":
+            return [title] + lines
+        inner = max(10, width - 2)
+        top = f"┌{self._fit(title, inner, fill='─')}┐"
+        body_lines: list[str] = []
+        for ln in lines:
+            body_lines.extend(self._wrap_line(ln, inner))
+        body_lines = body_lines[:height]
+        while len(body_lines) < height:
+            body_lines.append("")
+        body = [f"│{self._fit(line, inner)}│" for line in body_lines]
+        bot = f"└{'─' * inner}┘"
+        return [top, *body, bot]
+
+    def _fit(self, text: str, width: int, fill: str = " ") -> str:
+        raw = str(text)
+        visible = ANSI_RE.sub("", raw)
+        if len(visible) > width:
+            # Avoid breaking ANSI sequences by truncating plain-text fallback only.
+            return visible[:max(0, width - 1)] + "…"
+        return raw + (fill * (width - len(visible)))
+
+    def _wrap_line(self, text: str, width: int) -> list[str]:
+        raw = str(text)
+        vis = ANSI_RE.sub("", raw)
+        if len(vis) <= width:
+            return [raw]
+        # For colored lines, wrap plain fallback to avoid broken ANSI sequences.
+        if vis != raw:
+            wrapped = textwrap.wrap(vis, width=width, break_long_words=False, break_on_hyphens=False)
+            return wrapped if wrapped else [vis]
+        wrapped = textwrap.wrap(raw, width=width, break_long_words=False, break_on_hyphens=False)
+        return wrapped if wrapped else [raw]
+
+    def _fmt_delta(self, key: str, cur: float) -> str:
+        if key not in self.prev_metrics:
+            return "n/a"
+        d = cur - self.prev_metrics[key]
+        return f"{d:+.3f}"
+
+    def _update_best(self, metrics: dict[str, float]) -> None:
+        if not metrics:
+            return
+        cur = metrics.get("Combined", float("-inf"))
+        best = self.best_metrics.get("Combined", float("-inf"))
+        if cur > best:
+            self.best_metrics = dict(metrics)
+            self.best_window = self.window
+
+    def _throughput_eta(self) -> tuple[float, float]:
+        elapsed = max(1e-6, time.time() - self.run_start_ts)
+        rate = self.windows_done / elapsed if self.windows_done > 0 else 0.0
+        remaining = max(0, self.total_windows - self.window) if self.total_windows else 0
+        eta = (remaining / rate) if rate > 0 else 0.0
+        return rate, eta
+
+    def _format_seconds(self, v: float) -> str:
+        s = int(max(0, round(v)))
+        m, s = divmod(s, 60)
+        h, m = divmod(m, 60)
+        if h:
+            return f"{h:02d}:{m:02d}:{s:02d}"
+        return f"{m:02d}:{s:02d}"
+
+    def _status_lines(self) -> list[str]:
+        rate, eta = self._throughput_eta()
+        initial_note = ""
+        if self.attempt <= 1 and self.window <= 1:
+            initial_note = (
+                "Note: first window in pass 1 may be slower due to initial inference warm-up; "
+                "later windows/passes are usually faster."
+            )
+        return [
+            f"{self._color('Length', '1;36')}={self.overlap_length}  {self._color('Row', '1;36')}={self.row_display_num}",
+            f"{self._color('Attempt', self._pass_color())}={self.attempt}/{self.total_attempts or '?'}  {self._color('Window', '1;36')}={self.window}/{self.total_windows or '?'}",
+            f"{self._color('Elapsed', '1;36')}={self._format_seconds(time.time() - self.run_start_ts)}  {self._color('Win/s', '1;36')}={rate:.2f}  {self._color('ETA', '1;36')}={self._format_seconds(eta)}",
+            self._color(initial_note, "1;33") if initial_note else "",
+        ]
+
+    def _metrics_lines(self, metrics: dict[str, float]) -> list[str]:
+        if not metrics:
+            return ["waiting for first summary"]
+        return [
+            (
+                f"{self._color('Combined', self._metric_color('Combined'))}={metrics.get('Combined', float('nan')):.3f} ({self._fmt_delta('Combined', metrics.get('Combined', 0.0))})  "
+                f"{self._color('SS1', '1;93')}={metrics.get('SS_score1', float('nan')):.2f}  "
+                f"{self._color('SS2', '1;93')}={metrics.get('SS_score2', float('nan')):.2f}  "
+                f"{self._color('SS_avg', self._metric_color('SS_avg'))}={metrics.get('SS_avg', float('nan')):.2f} ({self._fmt_delta('SS_avg', metrics.get('SS_avg', 0.0))})"
+            ),
+            (
+                f"{self._color('ESM1', '1;94')}={metrics.get('ESM1', float('nan')):.2f}  "
+                f"{self._color('ESM2', '1;94')}={metrics.get('ESM2', float('nan')):.2f}  "
+                f"{self._color('ESM_avg', self._metric_color('ESM_avg'))}={metrics.get('ESM_avg', float('nan')):.2f} ({self._fmt_delta('ESM_avg', metrics.get('ESM_avg', 0.0))})  "
+                f"{self._color('Align1', self._metric_color('Align1'))}={metrics.get('Align1', float('nan')):.2f}  {self._color('Align2', self._metric_color('Align2'))}={metrics.get('Align2', float('nan')):.2f}"
+            ),
+            (
+                self._color("Best so far:", "1;95") + " "
+                + (
+                    f"W{self.best_window} Combined={self.best_metrics.get('Combined', float('nan')):.3f} "
+                    f"SS_avg={self.best_metrics.get('SS_avg', float('nan')):.2f} "
+                    f"ESM_avg={self.best_metrics.get('ESM_avg', float('nan')):.2f}"
+                    if self.best_metrics else "n/a"
+                )
+            ),
+        ]
+
+    def _window_bounds(self, window_1based: int) -> tuple[int, int]:
+        start = max(0, (window_1based - 1) * STRIDE_AA)
+        end = min(start + WINDOW_AA, MODEL_AA)
+        return start, end
+
+    def _build_track(self, *, reverse: bool, width: int = 56) -> str:
+        chars = ["."] * width
+        for w in sorted(self.window_attempt_marks):
+            s, e = self._window_bounds(w)
+            i0 = int((s / MODEL_AA) * width)
+            i1 = max(i0 + 1, int((e / MODEL_AA) * width))
+            mark_attempt = self.window_attempt_marks.get(w, 1)
+            mark_char = "@" if mark_attempt <= 1 else "#"
+            for i in range(max(0, i0), min(width, i1)):
+                chars[i] = mark_char
+
+        if self.window > 0:
+            s, e = self._window_bounds(self.window)
+            i0 = int((s / MODEL_AA) * width)
+            i1 = max(i0 + 1, int((e / MODEL_AA) * width))
+            active_char = "<" if reverse else ">"
+            for i in range(max(0, i0), min(width, i1)):
+                chars[i] = active_char
+
+        if reverse:
+            chars.reverse()
+        return "".join(chars)
+
+    def _radar_lines(self) -> list[str]:
+        if self.window > 0:
+            s, e = self._window_bounds(self.window)
+            aa_label = f"{s}-{e}"
+        else:
+            aa_label = "n/a"
+        fwd = self._build_track(reverse=False)
+        rev = self._build_track(reverse=True)
+        return [
+            f"{self._color('Active AA range', '1;36')}: {aa_label}",
+            f"{self._color('Forward  0->104', '1;92')}: {self._color(fwd, '1;92')}",
+            f"{self._color('Reverse  104->0', '1;94')}: {self._color(rev, '1;94')}",
+            self._color("Legend: . initial  @ attempt1  # attempt2+  > active forward  < active reverse", "1;90"),
+        ]
+
+    def render(self, out: Callable[[str], None]) -> None:
+        metrics = self._latest_metrics()
+        self._update_best(metrics)
+        title = self._color("Convergent Overlap Live View", self._pass_color())
+        status_panel = self._panel(" Status ", self._status_lines(), height=5)
+        metrics_panel = self._panel(" Metrics ", self._metrics_lines(metrics), height=4)
+        radar_panel = self._panel(" Window Radar ", self._radar_lines(), height=4)
+        trend_lines = []
+        for metric in self.plot_metrics:
+            trend, lo, hi, n_metric = self._trend(metric)
+            c = self._metric_color(metric)
+            trend_lines.append(f"{self._color(metric + ':', c)} {self._color(trend, c)}")
+            trend_lines.append(f"  x=window (latest {n_metric})   y~[{lo:.3f}, {hi:.3f}]")
+        trends_panel = self._panel(" Trends ", trend_lines or ["(no trend data)"], height=8)
+        summary_panel = self._panel(
+            " Attempt Summary ",
+            [self.final_attempt_summary or "(awaiting attempt-final metrics)"],
+            height=2,
+        )
+        ev_lines = list(self.recent_events) if self.recent_events else ["waiting for optimizer output..."]
+        if self.ss_progress:
+            ev_lines = [f"SS: {self.ss_progress}", *ev_lines]
+        events_panel = self._panel(" Recent Events ", [f"- {e}" for e in ev_lines], height=8)
+
+        lines = ["\x1b[2J\x1b[H", title]
+        lines.extend(status_panel)
+        if self.display_mode == "radar":
+            lines.extend(radar_panel)
+        lines.extend(metrics_panel)
+        lines.extend(trends_panel)
+        lines.extend(summary_panel)
+        lines.extend(events_panel)
+        out("\n".join(lines) + "\n")
+
+    def handle_line(self, line: str, out: Callable[[str], None]) -> None:
+        text = line.strip()
+        if not text:
+            return
+
+        attempt_match = ATTEMPT_RE.search(text)
+        if attempt_match:
+            self.attempt = int(attempt_match.group(1))
+            self.total_attempts = int(attempt_match.group(2))
+            self.recent_events.append(f"Optimization attempt {self.attempt}/{self.total_attempts}")
+            self.render(out)
+            return
+
+        window_match = WINDOW_RE.search(text)
+        if window_match:
+            self.window = int(window_match.group(1))
+            self.total_windows = int(window_match.group(2))
+            self.recent_events.append(f"Entering window {self.window}/{self.total_windows}")
+            self.render(out)
+            return
+
+        summary_match = SUMMARY_RE.search(text)
+        if summary_match:
+            try:
+                summary = ast.literal_eval(summary_match.group(1))
+                if isinstance(summary, dict):
+                    self.summaries.append(summary)
+                    self.windows_done += 1
+                    try:
+                        window_1based = int(summary.get("window", -1)) + 1
+                        if window_1based > 0:
+                            prev = self.window_attempt_marks.get(window_1based, 0)
+                            cur = self.attempt if self.attempt > 0 else 1
+                            self.window_attempt_marks[window_1based] = max(prev, cur)
+                    except Exception:
+                        pass
+                    self.prev_metrics = self._latest_metrics()
+                    evt_metrics = []
+                    for m in self.plot_metrics[:3]:
+                        if m in summary:
+                            evt_metrics.append(f"{m}={summary[m]}")
+                    evt_tail = ", ".join(evt_metrics) if evt_metrics else "metrics updated"
+                    self.recent_events.append(
+                        f"Window {summary.get('window', '?')} {evt_tail}"
+                    )
+                    self.render(out)
+                    return
+            except Exception:
+                pass
+
+        if "Final metrics this attempt" in text or "Secondary structure below" in text:
+            if "Final metrics this attempt" in text:
+                self.final_attempt_summary = text
+            self.recent_events.append(text)
+            self.render(out)
+            return
+        if "Inference attempt failed" in text or "All retries failed" in text:
+            self.recent_events.append(text)
+            self.render(out)
+            return
+
+    def handle_stderr_line(self, line: str, out: Callable[[str], None]) -> None:
+        text = line.replace("\r", "").strip()
+        if not text:
+            return
+        if "Predicting SS:" in text:
+            self.ss_progress = text
+            self.render(out)
+            return
+        # keep unexpected stderr events visible in recent events panel
+        self.recent_events.append(text)
+        self.render(out)
+
+    def final_summary_box(self, out_path: str | None) -> str:
+        metrics = self._latest_metrics()
+        lines = [
+            f"Length={self.overlap_length} Row={self.row_display_num} Attempts={self.total_attempts or self.attempt}",
+            (
+                f"Final: Combined={metrics.get('Combined', float('nan')):.3f} "
+                f"SS1={metrics.get('SS_score1', float('nan')):.2f} "
+                f"SS2={metrics.get('SS_score2', float('nan')):.2f} "
+                f"SS_avg={metrics.get('SS_avg', float('nan')):.2f} "
+                f"ESM_avg={metrics.get('ESM_avg', float('nan')):.2f}"
+                if metrics else "Final: n/a"
+            ),
+            (
+                f"Best: W{self.best_window} Combined={self.best_metrics.get('Combined', float('nan')):.3f} "
+                f"SS_avg={self.best_metrics.get('SS_avg', float('nan')):.2f}"
+                if self.best_metrics else "Best: n/a"
+            ),
+            f"Output: {out_path or '(none)'}",
+        ]
+        return "\n".join(self._panel(" Row Summary ", lines, height=4))
+
+
+class _TuiStderrProxy(TextIO):
+    def __init__(self, sink: Callable[[str], None], passthrough: TextIO) -> None:
+        self._sink = sink
+        self._passthrough = passthrough
+        self._buf = ""
+
+    def write(self, s: str) -> int:
+        if not s:
+            return 0
+        self._buf += s
+        while "\n" in self._buf:
+            line, self._buf = self._buf.split("\n", 1)
+            self._handle_line(line)
+        return len(s)
+
+    def flush(self) -> None:
+        if self._buf:
+            self._handle_line(self._buf)
+            self._buf = ""
+        self._passthrough.flush()
+
+    def _handle_line(self, line: str) -> None:
+        text = line.replace("\r", "").strip()
+        if not text:
+            return
+        if "Predicting SS:" in text:
+            self._sink(text)
+            return
+        self._passthrough.write(line + "\n")
+
+    def isatty(self) -> bool:
+        return self._passthrough.isatty()
+
+
+def _run_with_print_intercept(
+    fn: Callable[[], str | None],
+    on_line: Callable[[str], None],
+    stderr_on_line: Callable[[str], None] | None = None,
+) -> str | None:
+    orig_print = builtins.print
+    orig_stderr = sys.stderr
+
+    def intercepted_print(*args, **kwargs):
+        sep = kwargs.get("sep", " ")
+        end = kwargs.get("end", "\n")
+        text = sep.join(str(a) for a in args)
+        for part in text.splitlines():
+            on_line(part)
+        if end != "\n":
+            on_line(text + end)
+
+    builtins.print = intercepted_print
+    if stderr_on_line is not None:
+        sys.stderr = _TuiStderrProxy(stderr_on_line, orig_stderr)
+    try:
+        return fn()
+    finally:
+        builtins.print = orig_print
+        if stderr_on_line is not None:
+            try:
+                sys.stderr.flush()
+            except Exception:
+                pass
+            sys.stderr = orig_stderr
 
 
 def _parse_overlap_lengths(overlap_length_selected: str) -> list[int]:
@@ -720,16 +1193,52 @@ def main() -> int:
                 row_weights = override_weights
 
             try:
-                out_path = runtime["optimize_pair_and_save"](
-                    seq1,
-                    seq2,
-                    seq1_bracket,
-                    seq2_bracket,
-                    row_display_num,
-                    row_weights,
-                    first_pass_iterations=args.first_pass_iters,
-                    second_pass_iterations=args.second_pass_iters,
-                )
+                if args.display_mode in ("tui", "radar"):
+                    state = TuiState(
+                        overlap_length=int(length),
+                        row_display_num=int(row_display_num),
+                        plot_metrics=args.plot_metric,
+                        display_mode=args.display_mode,
+                        display_style=args.display_style,
+                    )
+                    state.render(lambda s: sys.stdout.write(s) or sys.stdout.flush())
+
+                    def run_optimize():
+                        return runtime["optimize_pair_and_save"](
+                            seq1,
+                            seq2,
+                            seq1_bracket,
+                            seq2_bracket,
+                            row_display_num,
+                            row_weights,
+                            first_pass_iterations=args.first_pass_iters,
+                            second_pass_iterations=args.second_pass_iters,
+                        )
+
+                    out_path = _run_with_print_intercept(
+                        run_optimize,
+                        lambda line: state.handle_line(
+                            line, lambda s: sys.stdout.write(s) or sys.stdout.flush()
+                        ),
+                        stderr_on_line=lambda line: state.handle_stderr_line(
+                            line, lambda s: sys.stdout.write(s) or sys.stdout.flush()
+                        ),
+                    )
+                    sys.stdout.write("\n")
+                    sys.stdout.flush()
+                    sys.stdout.write(state.final_summary_box(out_path) + "\n")
+                    sys.stdout.flush()
+                else:
+                    out_path = runtime["optimize_pair_and_save"](
+                        seq1,
+                        seq2,
+                        seq1_bracket,
+                        seq2_bracket,
+                        row_display_num,
+                        row_weights,
+                        first_pass_iterations=args.first_pass_iters,
+                        second_pass_iterations=args.second_pass_iters,
+                    )
                 if out_path:
                     all_out_files.append(out_path)
                     print(f"[OK] Wrote: {out_path}")
