@@ -17,12 +17,21 @@ If you use the code from this repository or the results, please cite the preprin
 </a>
 
 ## Getting Started
-Follow these steps to get started with this project in Google Colab, which is currently the fastest way to start predicting convergent overlaps. It can be run locally with a supported GPU, however currently this will require updates to file paths in the notebook as appropriate.
+The **command-line interface (CLI)** is the primary and recommended way to run this project. It is designed for local execution on a supported GPU and provides the best performance, reproducibility, and control over paths, caching, and batch workflows.
 
-Of note, if running locally:
+### Local CLI (Recommended)
 
-- Running inference is not generally limited by VRAM unless you opt for a large ESM-2 model for contact map generation.
-- A modern consumer-grade NVIDIA GPU with a high number of CUDA cores will typically provide faster inference and overlap generation than the GPUs offered in Google Colab.
+Running locally via the CLI is typically the fastest and most flexible setup:
+
+- Inference is **not generally VRAM-limited**, unless you explicitly enable large ESM-2 models for contact map generation.
+- A modern consumer-grade NVIDIA GPU with a high CUDA core count will usually outperform the GPUs available in Google Colab for both inference and overlap generation.
+- Local execution avoids Colab session limits and allows persistent caching of intermediate results.
+
+See the CLI documentation below for installation and usage instructions.
+
+### Google Colab (Optional / Quick Start)
+
+A Google Colab notebook is provided as a convenience for rapid experimentation or environments without a local GPU. This is currently the fastest way to get running without local setup, but it is not the preferred long-term workflow.
 
 ## Running from CLI (No Colab Form)
 Use `run_overlap_cli.py` to run the same pipeline without the Colab form UI.
