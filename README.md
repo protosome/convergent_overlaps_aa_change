@@ -22,14 +22,10 @@ The **command-line interface (CLI)** is the primary and recommended way to run t
 
 ### Why CLI?
 
-- Inference is **not generally VRAM-limited**, unless large ESM-2 models are enabled.
-- A modern consumer-grade NVIDIA GPU typically outperforms Google Colab GPUs.
-- No Colab session limits; persistent local caches.
-- Full access to live TUI and radar dashboards.
-
-- Inference is **not generally VRAM-limited**, unless you explicitly enable large ESM-2 models for contact map generation.
-- A modern consumer-grade NVIDIA GPU with a high CUDA core count will usually outperform the GPUs available in Google Colab for both inference and overlap generation.
-- Local execution avoids Colab session limits and allows persistent caching of intermediate results.
+- Inference is **not generally VRAM-limited**, unless large ESM-2 models are explicitly enabled for contact map generation.
+- A modern consumer-grade NVIDIA GPU (high CUDA core count) will typically outperform the GPUs available in Google Colab for both inference and overlap generation.
+- Local execution avoids Colab session limits and enables persistent caching of intermediate results.
+- The CLI provides full access to live **TUI** and **radar** dashboards for long optimization runs.
 
 See the CLI documentation below for installation and usage instructions.
 
