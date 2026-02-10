@@ -3,11 +3,25 @@
 ![Scrolling MSA](assets/msa_scroll_side_by_side.gif)
 
 ## Project Overview
-This project is focused on **generating convergent (tail-to-tail) overlapping genes**, with the main functionality being to predict and optimize overlapping DNA sequences for two given amino acid sequences. This is done using transformer-based models trained specifically for this purpose. An overlap length from 199 to 312 nucleotides may be user specified when generating and optimizing the overlap. The multi-objective optimization process integrates secondary structure predictions using S4PRED, long-range contacts using ESM-2 contact maps, alignment scores, and substitution scores. 
 
-A more detailed overview can be found in the preprint located here: **Designing Convergent Overlapping Genes with Transformer Encoder Models and Lightweight Structural Proxies**: https://doi.org/10.1101/2025.11.07.687268 
+This project generates **convergent (tail-to-tail) overlapping genes** by designing a single DNA overlap region that encodes two user-specified protein sequences on opposite strands. Given two amino acid sequences and a target overlap length (currently supported: **199–312 nt**), the pipeline predicts and iteratively optimizes candidate overlapping DNA sequences using transformer-based models trained specifically for convergent overlap design.
 
-If you use the code from this repository or the results, please cite the preprint.
+The optimization is **multi-objective**. Candidate overlaps are scored and refined using amino-acid–level constraints (alignment and substitution scoring) together with lightweight structural proxies, including:
+
+- Predicted secondary structure (S4PRED)  
+- Long-range contact information derived from ESM-2 contact maps  
+
+The resulting designs balance sequence feasibility with structural plausibility for both encoded proteins.
+
+## Reference
+
+For full methodological details, see the preprint:
+
+**Designing Convergent Overlapping Genes with Transformer Encoder Models and Lightweight Structural Proxies**  
+bioRxiv (2025)  
+DOI: https://doi.org/10.1101/2025.11.07.687268
+
+If you use this repository or results derived from it, please cite the preprint.
 
 ## CLI Live Dashboard Preview
 <a href="assets/tui.png">
