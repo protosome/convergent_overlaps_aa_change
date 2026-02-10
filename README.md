@@ -37,9 +37,6 @@ See the CLI documentation below for installation and usage instructions.
 
 A Google Colab notebook is provided as a convenience for rapid experimentation or environments without a local GPU. This is currently the fastest way to get running without local setup, but it is not the preferred long-term workflow.
 
-## Running from CLI (No Colab Form)
-Use `run_overlap_cli.py` to run the same pipeline without the Colab form UI.
-
 ### Recommended fresh download (important)
 Use this exact download flow before CLI setup/run:
 
