@@ -150,7 +150,7 @@ Process multiple overlap lengths and full row range:
 python run_overlap_cli.py \
   --excel-path test_results/aa_1_aa_2.xlsx \
   --working-dir test_results \
-  --overlap-length-selected 310, 311, 312 \
+  --overlap-length-selected 310,311,312 \
   --display-mode radar \
   --display-style boxed \
   --plot-metric Combined,SS_avg,ESM_avg
