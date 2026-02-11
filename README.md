@@ -6,7 +6,7 @@
 
 This project generates **convergent (tail-to-tail) overlapping genes** by designing a single DNA overlap region that encodes two user-specified protein sequences on opposite strands. Given two amino acid sequences and a target overlap length (currently supported: **199–312 nt**), the pipeline predicts and iteratively optimizes candidate overlapping DNA sequences using transformer-based models trained specifically for convergent overlap design.
 
-The optimization is **multi-objective**. Candidate overlaps are scored and refined using amino-acid–level constraints (alignment and substitution scoring) together with lightweight structural proxies, including:
+The optimization is **multi-objective**. Candidate overlaps are scored and refined using amino-acid-level constraints (alignment and substitution scoring) together with lightweight structural proxies, including:
 
 - Predicted secondary structure (S4PRED)  
 - Long-range contact information derived from ESM-2 contact maps  
@@ -93,7 +93,7 @@ python run_overlap_cli.py --check-only \
 - `-h, --help`: show help.
 - `--working-dir WORKING_DIR`: output directory for run artifacts and archives.
 - `--excel-path EXCEL_PATH`: input `.xlsx`, `.xls`, or `.csv` path.
-- `--overlap-length-selected OVERLAP_LENGTH_SELECTED`: one length or comma-separated lengths (example: `310` or `310,311`).
+- `--overlap-length-selected OVERLAP_LENGTH_SELECTED`: one length or comma-separated lengths (example: `310` or `310,311,312`).
 - `--start-row START_ROW`: 1-based start row.
 - `--end-row END_ROW`: 1-based end row; use `0` to process to end.
 - `--use-row-weights` / `--no-use-row-weights`: enable/disable per-row `ss/sub/aln/esm` weights from the input file.
