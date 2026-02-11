@@ -505,6 +505,8 @@ class TuiState:
             try:
                 summary = ast.literal_eval(summary_match.group(1))
                 if isinstance(summary, dict):
+                    previous_metrics = self._latest_metrics()
+                    self.prev_metrics = previous_metrics
                     self.summaries.append(summary)
                     self.windows_done += 1
                     try:
@@ -515,7 +517,6 @@ class TuiState:
                             self.window_attempt_marks[window_1based] = max(prev, cur)
                     except Exception:
                         pass
-                    self.prev_metrics = self._latest_metrics()
                     evt_metrics = []
                     for m in self.plot_metrics[:3]:
                         if m in summary:
