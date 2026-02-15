@@ -32,6 +32,9 @@ If you use this repository or results derived from it, please cite the preprint.
 
 The **command-line interface (CLI)** is the primary and recommended way to run this project. It is designed for local GPU execution and provides the best performance, reproducibility, and control over caching, batch runs, and visualization.
 
+Canonical CLI entrypoint: `run_overlap_cli_modular.py`  
+Legacy parity CLI retained for comparison during migration: `run_overlap_cli.py`
+
 ### Why CLI?
 
 - Inference is **not generally VRAM-limited**, unless large ESM-2 models are explicitly enabled for contact map generation.
@@ -72,7 +75,7 @@ cd convergent_overlaps_aa_change-main
 ### Quick start
 
 ```bash
-python run_overlap_cli.py \
+python run_overlap_cli_modular.py \
   --excel-path test_results/aa_1_aa_2.xlsx \
   --working-dir test_results \
   --overlap-length-selected 310 \
@@ -84,7 +87,7 @@ python run_overlap_cli.py \
 ### Validate environment only
 
 ```bash
-python run_overlap_cli.py --check-only \
+python run_overlap_cli_modular.py --check-only \
   --excel-path test_results/aa_1_aa_2.xlsx \
   --working-dir test_results
 ```
@@ -106,7 +109,7 @@ python run_overlap_cli.py --check-only \
 - `--second-pass-iters SECOND_PASS_ITERS`: second-pass optimization iterations.
 - `--reset-caches-per-row` / `--no-reset-caches-per-row`: reset internal caches between rows.
 - `--archive` / `--no-archive`: enable/disable zip archive creation.
-- `--notebook-path NOTEBOOK_PATH`: notebook file used as function runtime source.
+- `--notebook-path NOTEBOOK_PATH`: compatibility flag; ignored by `run_overlap_cli_modular.py`.
 - `--check-only` / `--no-check-only`: validate dependencies/paths and exit.
 - `--setup` / `--no-setup`: run dependency + S4PRED weights setup before run/check.
 - `--setup-only` / `--no-setup-only`: run setup and exit.
@@ -127,7 +130,7 @@ python run_overlap_cli.py --check-only \
 Force setup only:
 
 ```bash
-python run_overlap_cli.py --setup --setup-only \
+python run_overlap_cli_modular.py --setup --setup-only \
   --excel-path test_results/aa_1_aa_2.xlsx \
   --working-dir test_results
 ```
@@ -135,7 +138,7 @@ python run_overlap_cli.py --setup --setup-only \
 Run with dual forward/reverse window radar:
 
 ```bash
-python run_overlap_cli.py \
+python run_overlap_cli_modular.py \
   --excel-path test_results/aa_1_aa_2.xlsx \
   --working-dir test_results \
   --overlap-length-selected 310 \
@@ -147,7 +150,7 @@ python run_overlap_cli.py \
 Process multiple overlap lengths and full row range:
 
 ```bash
-python run_overlap_cli.py \
+python run_overlap_cli_modular.py \
   --excel-path test_results/aa_1_aa_2.xlsx \
   --working-dir test_results \
   --overlap-length-selected 310,311,312 \
@@ -159,7 +162,7 @@ python run_overlap_cli.py \
 Run with live terminal dashboard and trend plot:
 
 ```bash
-python run_overlap_cli.py \
+python run_overlap_cli_modular.py \
   --excel-path test_results/aa_1_aa_2.xlsx \
   --working-dir test_results \
   --overlap-length-selected 310 \
