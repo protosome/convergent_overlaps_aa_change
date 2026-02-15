@@ -1,6 +1,5 @@
 """
-Auto-extracted runtime from convergent_overlapping_gene_generation.ipynb.
-This module contains the original dependency and core-function cells for notebook-free execution.
+This module contains the dependency and core-function cells for notebook-free execution (while allowing for notebook execution in Colab).
 """
 
 from __future__ import annotations
