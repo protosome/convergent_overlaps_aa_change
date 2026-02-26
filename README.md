@@ -67,9 +67,8 @@ A Google Colab notebook is provided as a convenience for rapid experimentation o
 Use this exact download flow before CLI setup/run:
 
 ```bash
-wget https://github.com/protosome/convergent_overlaps_aa_change/archive/refs/heads/main.zip
-unzip main.zip
-cd convergent_overlaps_aa_change-main
+git clone https://github.com/protosome/convergent_overlaps_aa_change.git
+cd convergent_overlaps_aa_change
 ```
 
 ### Quick start
