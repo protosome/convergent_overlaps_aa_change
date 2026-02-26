@@ -64,7 +64,7 @@ If you plan to run ESM on CUDA in WSL:
 A Google Colab notebook is provided as a convenience for rapid experimentation or environments without a local GPU. This is currently the fastest way to get running without local setup, but it is not the preferred long-term workflow. Access by clicking the Colab icon above.
 
 ### Recommended fresh download (important)
-Use this exact download flow before CLI setup/run:
+Use this download flow before CLI setup/run:
 
 ```bash
 git clone https://github.com/protosome/convergent_overlaps_aa_change.git
