@@ -716,6 +716,7 @@ def _check_dependencies() -> tuple[list[str], list[str]]:
         "tensorflow": "tensorflow",
         "numpy": "numpy",
         "pandas": "pandas",
+        "tqdm": "tqdm",
         "Bio": "biopython",
         "openpyxl": "openpyxl",
         "skimage": "scikit-image",
