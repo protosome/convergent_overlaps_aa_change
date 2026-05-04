@@ -780,7 +780,7 @@ def _run_setup(
     print(f"[SETUP] Root dir is: {root_dir}")
 
     # Mirror notebook setup packages and add anything currently missing.
-    base_pkgs = ["biopython", "fair-esm"]
+    base_pkgs = ["biopython", "fair-esm", "pandas"]
     install_pkgs = list(dict.fromkeys(base_pkgs + missing_required + missing_optional))
     if install_pkgs:
         print("[SETUP] Installing Python packages:", ", ".join(install_pkgs))
