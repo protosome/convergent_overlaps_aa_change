@@ -13,6 +13,10 @@ The optimization is **multi-objective**. Candidate overlaps are scored and refin
 
 The resulting designs balance sequence feasibility with structural plausibility for both encoded proteins.
 
+## Project Infographic
+
+![Project infographic](assets/project_information_graphic.png)
+
 ## Reference
 
 For full methodological details, see the preprint:
