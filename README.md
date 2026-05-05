@@ -17,7 +17,7 @@ This framework balances codon compatibility, sequence similarity, and structural
 ## Project Infographic
 
 <p align="left">
-  <img src="assets/project_information_graphic.png" width="65%">
+  <img src="assets/project_information_graphic.png" width="70%">
 </p>
 
 ![Scrolling MSA](assets/msa_scroll_side_by_side.gif)
