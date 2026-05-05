@@ -14,12 +14,6 @@ Optimization is **multi-objective**. Candidate overlaps are evaluated and refine
 
 This framework balances codon compatibility, sequence similarity, and structural integrity across both encoded proteins.
 
-## Project Infographic
-
-<p align="left">
-  <img src="assets/project_information_graphic.png" width="70%">
-</p>
-
 ![Scrolling MSA](assets/msa_scroll_side_by_side.gif)
 
 ## Reference
