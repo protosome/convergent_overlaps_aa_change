@@ -1,15 +1,18 @@
-# Designing Convergent Overlapping Genes - README
+# Designing Convergent Overlapping Genes
 
 ## Project Overview
 
-This project generates **convergent (tail-to-tail) overlapping genes** by designing a single DNA overlap region that encodes two user-specified protein sequences on opposite strands. Given two amino acid sequences and a target overlap length (currently supported: **199–312 nt**), the pipeline predicts and iteratively optimizes candidate overlapping DNA sequences using transformer-based models trained specifically for convergent overlap design.
+This project enables the **design of convergent (tail-to-tail) overlapping genes**, where a single DNA sequence encodes two proteins on opposite strands.
 
-The optimization is **multi-objective**. Candidate overlaps are scored and refined using amino-acid-level constraints (alignment and substitution scoring) together with lightweight structural proxies, including:
+Given two amino acid sequences and a target overlap length (**199–312 nt**), the pipeline generates and optimizes candidate DNA sequences using transformer models trained directly at the nucleotide level. By combining uncertainty-aware inference with iterative optimization, it efficiently explores synonymous codon space to identify overlap solutions that preserve both protein sequences.
 
+Optimization is **multi-objective**. Candidate overlaps are evaluated and refined using amino-acid-level constraints together with lightweight structural proxies, including:
+
+- Alignment identity and substitution similarity  
 - Predicted secondary structure (S4PRED)  
-- Long-range contact information derived from ESM-2 contact maps  
+- Long-range contact similarity derived from ESM-2  
 
-The resulting designs balance sequence feasibility with structural plausibility for both encoded proteins.
+This framework balances codon compatibility, sequence similarity, and structural integrity across both encoded proteins.
 
 ## Project Infographic
 
