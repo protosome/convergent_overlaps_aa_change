@@ -15,7 +15,9 @@ The resulting designs balance sequence feasibility with structural plausibility 
 
 ## Project Infographic
 
-![Project infographic](assets/project_information_graphic.png)
+<p align="center">
+  <img src="assets/project_information_graphic.png" width="40%">
+</p>
 
 ## Reference
 
