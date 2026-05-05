@@ -1,7 +1,5 @@
 # Designing Convergent Overlapping Genes - README
 
-![Scrolling MSA](assets/msa_scroll_side_by_side.gif)
-
 ## Project Overview
 
 This project generates **convergent (tail-to-tail) overlapping genes** by designing a single DNA overlap region that encodes two user-specified protein sequences on opposite strands. Given two amino acid sequences and a target overlap length (currently supported: **199–312 nt**), the pipeline predicts and iteratively optimizes candidate overlapping DNA sequences using transformer-based models trained specifically for convergent overlap design.
@@ -18,6 +16,8 @@ The resulting designs balance sequence feasibility with structural plausibility 
 <p align="left">
   <img src="assets/project_information_graphic.png" width="70%">
 </p>
+
+![Scrolling MSA](assets/msa_scroll_side_by_side.gif)
 
 ## Reference
 
