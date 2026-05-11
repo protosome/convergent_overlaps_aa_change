@@ -3,7 +3,7 @@
 ## Project Infographic
 
 <p align="left">
-  <img src="assets/project_information_graphic.png" width="65%">
+  <img src="assets/project_information_graphic.png" width="80%">
 </p>
 
 ## Project Overview
