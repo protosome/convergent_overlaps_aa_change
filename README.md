@@ -1,5 +1,12 @@
 # Designing Convergent Overlapping Genes
 
+## Project Infographic
+
+<p align="left">
+  <img src="assets/project_information_graphic.png" width="70%">
+  <img src="assets/project_information_graphic.png" width="65%">
+</p>
+
 ## Project Overview
 
 This project enables the **design of convergent (tail-to-tail) overlapping genes**, where a single DNA sequence encodes two proteins on opposite strands.
