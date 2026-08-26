@@ -11,6 +11,7 @@ import json
 import os
 import re
 import shutil
+import ssl
 import subprocess
 import sys
 import tarfile
@@ -28,7 +29,9 @@ from paths import ROOT_DIR
 from overlap_runtime.notebook_api import create_runtime
 
 
-S4PRED_WEIGHTS_URL = "http://bioinfadmin.cs.ucl.ac.uk/downloads/s4pred/weights.tar.gz"
+S4PRED_WEIGHTS_URL = (
+    "https://bioinf.cs.ucl.ac.uk/downloads/s4pred/weights.tar.gz"
+)
 ALLOWED_PLOT_METRICS = ("Combined", "ESM_avg", "SS_avg", "Align1", "Align2", "Sub1", "Sub2")
 SUMMARY_RE = re.compile(r"Summary so far:\s*(\{.*\})")
 WINDOW_RE = re.compile(r"Entering window\s+(\d+)/(\d+)")
@@ -757,7 +760,16 @@ def _download_and_extract_weights(root_dir: Path, weights_url: str) -> None:
 
     tar_path = s4pred_dir / "weights.tar.gz"
     print(f"[SETUP] Downloading S4PRED weights from: {weights_url}")
-    urllib.request.urlretrieve(weights_url, tar_path)
+
+    # The S4PRED endpoint currently presents an expired certificate.
+    # This mirrors the notebook's wget --no-check-certificate setup.
+    ssl_context = ssl.create_default_context()
+    ssl_context.check_hostname = False
+    ssl_context.verify_mode = ssl.CERT_NONE
+
+    with urllib.request.urlopen(weights_url, context=ssl_context) as response:
+        with tar_path.open("wb") as output:
+            shutil.copyfileobj(response, output)
 
     print(f"[SETUP] Extracting weights archive: {tar_path}")
     with tarfile.open(tar_path, "r:gz") as tf:
